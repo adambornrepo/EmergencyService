@@ -1,0 +1,39 @@
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    showSql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/emergency
+    driverClassName: org.postgresql.Driver
+    username: username
+    password: password
+  messages:
+    basename: messages
+    encoding: UTF-8
+    cache-duration: -1
+    fallback-to-system-locale: true
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+    include-binding-errors: always
+    include-message: always
+
+logging:
+  file:
+    name: log/emergency_service.log
+  pattern:
+    file: "%d %-5level [%thread] %logger:%msg%n"
+  level:
+    org:
+      springframework:
+        web: WARN
+      hibernate: INFO
+    com.tpe: INFO
