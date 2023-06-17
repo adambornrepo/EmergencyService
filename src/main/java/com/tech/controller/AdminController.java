@@ -35,7 +35,7 @@ public class AdminController {
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyAuthority('super_admin:read', 'admin:read')")
     public Page<SimpleAdminResponse> getAllAdmin(
-            @PageableDefault(size = 10, page = 0, sort = {"ssn"}, direction = Sort.Direction.ASC) Pageable pageable
+            @PageableDefault(page = 0, size = 10, sort = "ssn", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         return adminService.getAllAdmin(pageable);
     }

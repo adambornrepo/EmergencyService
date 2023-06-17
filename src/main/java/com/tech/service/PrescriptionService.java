@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -124,20 +125,12 @@ public class PrescriptionService {
         return ResponseEntity.ok(prescriptionMapper.buildDetailedPrescriptionResponse(getOnePrescriptionById(id)));
     }
 
-    public Page<SimplePrescriptionResponse> getAllPrescription(int page, int size, String sort, String type) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimplePrescriptionResponse> getAllPrescription(Pageable pageable) {
         return prescriptionRepository.findAll(pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
 
 
-    public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(Long doctorId, int page, int size, String sort, String type) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(Long doctorId, Pageable pageable) {
         return prescriptionRepository.findByDoctor_Id(doctorId, pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
 
@@ -148,19 +141,13 @@ public class PrescriptionService {
         return ResponseEntity.ok(prescriptionMapper.buildSimplePrescriptionResponse(prescription));
     }
 
-    public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientId(Long patientId, int page, int size, String sort, String type) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
-        return prescriptionRepository.findByAppointment_Patient_Id(patientId, pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
+    public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientId(Long patientId, Pageable pageable) {
+        return prescriptionRepository
+                .findByAppointment_Patient_Id(patientId, pageable)
+                .map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
 
-    public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientSsn(String ssn, int page, int size, String sort, String type) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientSsn(String ssn, Pageable pageable) {
         return prescriptionRepository.findByAppointment_Patient_Ssn(ssn, pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
 }

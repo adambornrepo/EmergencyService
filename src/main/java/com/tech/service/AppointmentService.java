@@ -178,52 +178,32 @@ public class AppointmentService {
     }
 
 
-    public Page<SimpleAppointmentResponse> getAllAppointment(int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimpleAppointmentResponse> getAllAppointment(Pageable pageable) {
         return appointmentRepository
                 .findAll(pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);
     }
 
-    public Page<SimpleAppointmentResponse> getAllAppointmentByDoctorId(Long doctorId, int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimpleAppointmentResponse> getAllAppointmentByDoctorId(Long doctorId, Pageable pageable) {
         return appointmentRepository
                 .findByDoctor_Id(doctorId, pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);
     }
 
 
-    public Page<SimpleAppointmentResponse> getAllInProgressAppointmentByDoctorId(Long doctorId, int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimpleAppointmentResponse> getAllInProgressAppointmentByDoctorId(Long doctorId, Pageable pageable) {
         return appointmentRepository
                 .findByDoctor_IdAndStatus(doctorId, AppointmentStatus.IN_PROGRESS, pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);
     }
 
-    public Page<SimpleAppointmentResponse> getAllAppointmentByPatientSsn(String patientSsn, int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimpleAppointmentResponse> getAllAppointmentByPatientSsn(String patientSsn, Pageable pageable) {
         return appointmentRepository
                 .findAppointmentByPatient_Ssn(patientSsn, pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);
     }
 
-    public Page<SimpleAppointmentResponse> getAllAppointmentByDate(LocalDate date, int page, int size, String sort, String type) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by(sort).descending());
-        }
+    public Page<SimpleAppointmentResponse> getAllAppointmentByDate(LocalDate date, Pageable pageable) {
         return appointmentRepository
                 .findByAppointmentDate(date, pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);

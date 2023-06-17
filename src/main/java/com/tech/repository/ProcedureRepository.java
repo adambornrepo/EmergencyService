@@ -16,6 +16,6 @@ public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
     List<Procedure> findByStatusAndCreatedAtLessThanAndAppliedNotNull(ProcedureStatus status, long createdAt);
     List<Procedure> findByStatusAndCreatedAtLessThanAndAppliedNull(ProcedureStatus status, long createdAt);
     List<Procedure> findByEmployee_IdAndStatus(Long id, ProcedureStatus status);
-    Page<Procedure> findByEmployee_Id(Long id, PageRequest pageable);
+    Page<Procedure> findByEmployee_Id(Long id, Pageable pageable);
     List<Procedure> findByAppointment_Id(Long id);
 }

@@ -10,6 +10,9 @@ import com.tech.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +33,9 @@ public class PatientController {
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
     public Page<SimplePatientResponse> getAllPatient(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "ssn") String sort,
-            @RequestParam(value = "type", defaultValue = "ASC") String type
+            @PageableDefault(page = 0, size = 10, sort = "ssn", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return patientService.getAllPatient(page, size, sort, type);
+        return patientService.getAllPatient(pageable);
     }
 
     @PostMapping("/register")

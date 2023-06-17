@@ -9,6 +9,9 @@ import com.tech.service.PrescriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,24 +32,18 @@ public class PrescriptionController {
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
     public Page<SimplePrescriptionResponse> getAllPrescription(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return prescriptionService.getAllPrescription(page, size, sort, type);
+        return prescriptionService.getAllPrescription(pageable);
     }
 
     @GetMapping("/getAll/doctor")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(
             @RequestParam("id") Long id,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return prescriptionService.getAllPrescriptionByDoctorId(id, page, size, sort, type);
+        return prescriptionService.getAllPrescriptionByDoctorId(id, pageable);
     }
 
     @GetMapping("/get/appointment")
@@ -59,23 +56,17 @@ public class PrescriptionController {
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientId(
             @RequestParam("id") Long id,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return prescriptionService.getAllPrescriptionByPatientId(id, page, size, sort, type);
+        return prescriptionService.getAllPrescriptionByPatientId(id, pageable);
     }
     @GetMapping("/getAll/patient/ssn")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientSsn(
             @RequestParam("val") String ssn,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return prescriptionService.getAllPrescriptionByPatientSsn(ssn, page, size, sort, type);
+        return prescriptionService.getAllPrescriptionByPatientSsn(ssn, pageable);
     }
 
     @PostMapping("/create")

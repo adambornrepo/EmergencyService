@@ -9,6 +9,9 @@ import com.tech.service.AppointmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,36 +35,27 @@ public class AppointmentController {
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read','psr:read')")
     public Page<SimpleAppointmentResponse> getAllAppointment(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return appointmentService.getAllAppointment(page, size, sort, type);
+        return appointmentService.getAllAppointment(pageable);
     }
 
     @GetMapping("/getAll/doctor")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
     public Page<SimpleAppointmentResponse> getAllAppointmentByDoctorId(
             @RequestParam("id") Long id,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return appointmentService.getAllAppointmentByDoctorId(id, page, size, sort, type);
+        return appointmentService.getAllAppointmentByDoctorId(id, pageable);
     }
 
     @GetMapping("/getAll/inProgress/doctor")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
     public Page<SimpleAppointmentResponse> getAllInProgressAppointmentByDoctorId(
             @RequestParam("id") Long id,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "20") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return appointmentService.getAllInProgressAppointmentByDoctorId(id, page, size, sort, type);
+        return appointmentService.getAllInProgressAppointmentByDoctorId(id, pageable);
     }
 
 
@@ -69,24 +63,18 @@ public class AppointmentController {
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read','psr:read')")
     public Page<SimpleAppointmentResponse> getAllAppointmentByPatientId(
             @RequestParam("ssn") String ssn,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return appointmentService.getAllAppointmentByPatientSsn(ssn, page, size, sort, type);
+        return appointmentService.getAllAppointmentByPatientSsn(ssn, pageable);
     }
 
     @GetMapping("/getAll/date")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
     public Page<SimpleAppointmentResponse> getAllAppointmentByDate(
             @RequestParam("on") LocalDate date,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "id") String sort,
-            @RequestParam(value = "type", defaultValue = "DESC") String type
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return appointmentService.getAllAppointmentByDate(date, page, size, sort, type);
+        return appointmentService.getAllAppointmentByDate(date, pageable);
     }
 
     @PostMapping("/create")
@@ -97,7 +85,9 @@ public class AppointmentController {
 
     @PatchMapping("/update")
     @PreAuthorize("hasAnyAuthority('admin:update','psr:update')")
-    public ResponseEntity<DetailedAppointmentResponse> updateAppointment(@Valid @RequestBody AppointmentUpdateRequest request, @RequestParam("id") Long id) {
+    public ResponseEntity<DetailedAppointmentResponse> updateAppointment(
+            @Valid @RequestBody AppointmentUpdateRequest request, @RequestParam("id") Long id
+    ) {
         return appointmentService.updateAppointment(request, id);
     }
 
