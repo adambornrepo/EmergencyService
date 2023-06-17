@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.Doctor;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedDoctorResponse;
 import com.tech.payload.response.simple.SimpleDoctorResponse;
 import com.tech.repository.DoctorRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -35,6 +38,7 @@ public class DoctorService {
     private final DoctorMapper doctorMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedDoctorResponse> getOneDoctorByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -87,7 +91,7 @@ public class DoctorService {
     public ResponseEntity<DetailedDoctorResponse> saveDoctor(DoctorRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Doctor doctor = request.get();
-        doctor.setPassword(doctor.getPassword());// TODO: 6.06.2023 Encode
+        doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         doctor.setRole(Role.DOCTOR);
         Doctor saved = doctorRepository.save(doctor);
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(saved), HttpStatus.CREATED);
@@ -102,7 +106,7 @@ public class DoctorService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         Doctor updated = doctorRepository.save(found);
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -121,5 +125,32 @@ public class DoctorService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.doctor.delete")).build(),
                 HttpStatus.OK
         );
+    }
+
+    public ResponseEntity<DetailedDoctorResponse> assignChiefPhysician(Long id) {
+        Doctor doctor = getOneDoctorById(id);
+        Doctor chiefPhysician = getChiefPhysician();
+        if (chiefPhysician == null) {
+            doctor.setRole(Role.CHIEF);
+            Doctor assigned = doctorRepository.save(doctor);
+            return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(assigned), HttpStatus.ACCEPTED);
+        }
+        chiefPhysician.setRole(Role.DOCTOR);
+        Doctor formerChief = doctorRepository.save(chiefPhysician);
+        doctor.setRole(Role.CHIEF);
+        Doctor assigned = doctorRepository.save(doctor);
+        return ResponseEntity.ok(doctorMapper.buildDetailedDoctorResponse(assigned));
+    }
+
+    private Doctor getChiefPhysician() {
+        return doctorRepository.findByRole(Role.CHIEF).orElse(null);
+    }
+
+
+    public List<SimpleDoctorResponse> getAllActiveDoctor() {
+        return doctorRepository.findByIsDisabled(false)
+                .stream()
+                .map(doctorMapper::buildSimpleDoctorResponse)
+                .collect(Collectors.toList());
     }
 }

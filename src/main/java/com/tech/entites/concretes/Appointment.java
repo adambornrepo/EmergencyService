@@ -33,6 +33,7 @@ public class Appointment implements Serializable {
     private String symptoms;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
     private AppointmentStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -14,9 +14,9 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ProcedureCreationRequest implements Serializable {
 
-    @NotNull(message = "{validation.null.applied}")
-    @Size(min = 2,max = 150,message = "{validation.size.field}")
-    private String applied;
+    @NotNull(message = "{validation.null.doctor.note}")
+    @Size(min = 2, max = 150, message = "{validation.size.field}")
+    private String doctorNote;
 
     @Positive(message = "{validation.id.negative}")
     @NotNull(message = "{validation.null.appointment.id}")

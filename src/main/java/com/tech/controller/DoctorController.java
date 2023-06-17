@@ -11,21 +11,26 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/dr")
+@RequestMapping("api/v1/dr")
 @RequiredArgsConstructor
 public class DoctorController {
 
     private final DoctorService doctorService;
 
     @GetMapping("/get")
-    public ResponseEntity<DetailedDoctorResponse> getOneDoctor(@RequestParam("in") UniqueField searchIn, @RequestParam("val")String value) {
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read')")
+    public ResponseEntity<DetailedDoctorResponse> getOneDoctor(@RequestParam("in") UniqueField searchIn, @RequestParam("val") String value) {
         return doctorService.getOneDoctorByUniqueField(searchIn, value);
     }
 
     @GetMapping("/getAll")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
     public Page<SimpleDoctorResponse> getAllDoctor(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -35,19 +40,34 @@ public class DoctorController {
         return doctorService.getAllDoctor(page, size, sort, type);
     }
 
+    @GetMapping("/getAll/active")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
+    public List<SimpleDoctorResponse> getAllActiveDoctor() {
+        return doctorService.getAllActiveDoctor();
+    }
+
     @PostMapping("/register")
+    @PreAuthorize("hasAnyAuthority('admin:create','chief:create')")
     public ResponseEntity<DetailedDoctorResponse> saveDoctor(@Valid @RequestBody DoctorRegistrationRequest request) {
         return doctorService.saveDoctor(request);
     }
 
     @PatchMapping("/update")
+    @PreAuthorize("hasAnyAuthority('admin:update','chief:update','doctor:update')")
     public ResponseEntity<DetailedDoctorResponse> updateDoctor(@Valid @RequestBody DoctorUpdateRequest request, @RequestParam("id") Long id) {
         return doctorService.updateDoctor(request, id);
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('admin:delete','chief:delete','doctor:delete')")
     public ResponseEntity<ApiResponse> deleteDoctor(@RequestParam("id") Long id) {
         return doctorService.deleteDoctor(id);
+    }
+
+    @PatchMapping("/assign/chief")
+    @PreAuthorize("hasAnyAuthority('admin:update','chief:update')")
+    public ResponseEntity<DetailedDoctorResponse> toAssignChiefPhysician(@RequestParam("id") Long id) {
+        return doctorService.assignChiefPhysician(id);
     }
 
 

@@ -2,6 +2,7 @@ package com.tech.payload.request.update;
 
 import com.tech.entites.concretes.Address;
 import com.tech.entites.concretes.Patient;
+import com.tech.payload.annotations.custom.PhoneNumber;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class PatientUpdateRequest implements Serializable, Consumer<Patient> {
     @Size(min = 2,max = 50,message = "{validation.size.field}")
     private String lastName;
 
-    // TODO: 6.06.2023 validation regex
+    @PhoneNumber
     private String phoneNumber;
 
     @Valid

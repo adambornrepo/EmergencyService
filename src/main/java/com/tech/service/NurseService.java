@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.Nurse;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedNurseResponse;
 import com.tech.payload.response.simple.SimpleNurseResponse;
 import com.tech.repository.NurseRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -34,6 +37,7 @@ public class NurseService {
     private final NurseMapper nurseMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedNurseResponse> getOneNurseByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -87,7 +91,7 @@ public class NurseService {
     public ResponseEntity<DetailedNurseResponse> saveNurse(NurseRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Nurse nurse = request.get();
-        nurse.setPassword(nurse.getPassword());// TODO: 6.06.2023 Encode
+        nurse.setPassword(passwordEncoder.encode(nurse.getPassword()));
         nurse.setRole(Role.NURSE);
         Nurse saved = nurseRepository.save(nurse);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(saved), HttpStatus.CREATED);
@@ -102,7 +106,7 @@ public class NurseService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         Nurse updated = nurseRepository.save(found);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -121,5 +125,12 @@ public class NurseService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.nurse.delete")).build(),
                 HttpStatus.OK
         );
+    }
+
+    public List<SimpleNurseResponse> getAllActiveNurse() {
+        return nurseRepository.findByIsDisabled(false)
+                .stream()
+                .map(nurseMapper::buildSimpleNurseResponse)
+                .collect(Collectors.toList());
     }
 }

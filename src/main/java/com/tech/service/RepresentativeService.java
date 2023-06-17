@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.Representative;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedRepresentativeResponse;
 import com.tech.payload.response.simple.SimpleRepresentativeResponse;
 import com.tech.repository.RepresentativeRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -34,6 +37,7 @@ public class RepresentativeService {
     private final RepresentativeMapper representativeMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedRepresentativeResponse> getOneRepresentativeByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -87,7 +91,7 @@ public class RepresentativeService {
     public ResponseEntity<DetailedRepresentativeResponse> saveRepresentative(RepresentativeRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Representative representative = request.get();
-        representative.setPassword(representative.getPassword()); // TODO: 6.06.2023 Encode
+        representative.setPassword(passwordEncoder.encode(representative.getPassword()));
         representative.setRole(Role.PSR);
         Representative saved = representativeRepository.save(representative);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(saved), HttpStatus.CREATED);
@@ -102,7 +106,7 @@ public class RepresentativeService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         Representative updated = representativeRepository.save(found);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -121,5 +125,12 @@ public class RepresentativeService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.psr.delete")).build(),
                 HttpStatus.OK
         );
+    }
+
+    public List<SimpleRepresentativeResponse> getAllActiveRepresentative() {
+        return representativeRepository.findByIsDisabled(false)
+                .stream()
+                .map(representativeMapper::buildSimpleRepresentativeResponse)
+                .collect(Collectors.toList());
     }
 }

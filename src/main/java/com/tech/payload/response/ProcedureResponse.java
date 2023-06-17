@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 public class ProcedureResponse implements Serializable {
 
     private Long id;
+    private String doctorNote;
     private String applied;
     private Long appointmentId;
     private Long employeeId;
@@ -28,6 +29,9 @@ public class ProcedureResponse implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updatedAt;
     private boolean isDisabled;
 
 }

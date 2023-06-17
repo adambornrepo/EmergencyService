@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tech.entites.concretes.Address;
 import com.tech.entites.enums.Gender;
-import com.tech.entites.enums.Role;
+import com.tech.security.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

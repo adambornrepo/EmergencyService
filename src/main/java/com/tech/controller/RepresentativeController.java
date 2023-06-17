@@ -11,21 +11,26 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/psr")
+@RequestMapping("api/v1/psr")
 @RequiredArgsConstructor
 public class RepresentativeController {
 
     private final RepresentativeService representativeService;
 
     @GetMapping("/get")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
     public ResponseEntity<DetailedRepresentativeResponse> getOneRepresentative(@RequestParam("in") UniqueField searchIn, @RequestParam("val")String value) {
         return representativeService.getOneRepresentativeByUniqueField(searchIn, value);
     }
 
     @GetMapping("/getAll")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
     public Page<SimpleRepresentativeResponse> getAllRepresentative(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -35,17 +40,26 @@ public class RepresentativeController {
         return representativeService.getAllRepresentative(page, size, sort, type);
     }
 
+    @GetMapping("/getAll/active")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
+    public List<SimpleRepresentativeResponse> getAllActiveRepresentative() {
+        return representativeService.getAllActiveRepresentative();
+    }
+
     @PostMapping("/register")
+    @PreAuthorize("hasAnyAuthority('admin:create','chief:create')")
     public ResponseEntity<DetailedRepresentativeResponse> saveRepresentative(@Valid @RequestBody RepresentativeRegistrationRequest request) {
         return representativeService.saveRepresentative(request);
     }
 
     @PatchMapping("/update")
+    @PreAuthorize("hasAnyAuthority('admin:update','psr:update')")
     public ResponseEntity<DetailedRepresentativeResponse> updateRepresentative(@Valid @RequestBody RepresentativeUpdateRequest request, @RequestParam("id") Long id) {
         return representativeService.updateRepresentative(request, id);
     }
 
     @DeleteMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('admin:delete','chief:delete','psr:delete')")
     public ResponseEntity<ApiResponse> deleteRepresentative(@RequestParam("id") Long id) {
         return representativeService.deleteRepresentative(id);
     }

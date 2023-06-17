@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.LabTechnician;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import com.tech.payload.response.*;
 import com.tech.payload.response.detailed.DetailedLabTechResponse;
 import com.tech.payload.response.simple.SimpleLabTechResponse;
 import com.tech.repository.LabTechnicianRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -36,6 +39,7 @@ public class LabTechnicianService {
     private final LabTechnicianMapper labTechMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedLabTechResponse> getOneLabTechByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -89,7 +93,7 @@ public class LabTechnicianService {
     public ResponseEntity<DetailedLabTechResponse> saveLabTech(LabTechRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         LabTechnician labTech = request.get();
-        labTech.setPassword(labTech.getPassword()); // TODO: 6.06.2023 Encode
+        labTech.setPassword(passwordEncoder.encode(labTech.getPassword()));
         labTech.setRole(Role.LAB_TECHNICIAN);
         LabTechnician saved = labTechnicianRepository.save(labTech);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(saved), HttpStatus.CREATED);
@@ -104,7 +108,7 @@ public class LabTechnicianService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         LabTechnician updated = labTechnicianRepository.save(found);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -126,4 +130,10 @@ public class LabTechnicianService {
     }
 
 
+    public List<SimpleLabTechResponse> getAllActiveLabTech() {
+        return labTechnicianRepository.findByIsDisabled(false)
+                .stream()
+                .map(labTechMapper::buildSimpleLabTechResponse)
+                .collect(Collectors.toList());
+    }
 }

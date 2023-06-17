@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.Admin;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,17 +12,22 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedAdminResponse;
 import com.tech.payload.response.simple.SimpleAdminResponse;
 import com.tech.repository.AdminRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -34,6 +38,7 @@ public class AdminService {
     private final AdminMapper adminMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedAdminResponse> getOneAdminByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -76,18 +81,14 @@ public class AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.found.admin.id"), id)));
     }
 
-    public Page<SimpleAdminResponse> getAllAdmin(int page, int size, String sort, String type) {
-        PageRequest pageable = PageRequest.of(page, size, Sort.by("isDisabled").ascending().and(Sort.by(sort)).ascending());
-        if (Objects.equals(type, "DESC")) {
-            pageable = PageRequest.of(page, size, Sort.by("isDisabled").ascending().and(Sort.by(sort)).descending());
-        }
+    public Page<SimpleAdminResponse> getAllAdmin(Pageable pageable) {
         return adminRepository.findAll(pageable).map(adminMapper::buildSimpleAdminResponse);
     }
 
     public ResponseEntity<DetailedAdminResponse> saveAdmin(AdminRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Admin admin = request.get();
-        admin.setPassword(admin.getPassword()); // TODO: 6.06.2023 Encode
+        admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         admin.setRole(Role.ADMIN);
         Admin saved = adminRepository.save(admin);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(saved), HttpStatus.CREATED);
@@ -102,7 +103,7 @@ public class AdminService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         Admin updated = adminRepository.save(found);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -121,5 +122,13 @@ public class AdminService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.admin.delete")).build(),
                 HttpStatus.OK
         );
+    }
+
+
+    public List<SimpleAdminResponse> getAllActiveAdmin() {
+        return adminRepository.findByIsDisabled(false)
+                .stream()
+                .map(adminMapper::buildSimpleAdminResponse)
+                .collect(Collectors.toList());
     }
 }

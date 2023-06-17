@@ -37,3 +37,18 @@ logging:
         web: WARN
       hibernate: INFO
     com.tpe: INFO
+
+security:
+  token:
+    prefix: Bearer
+    secret: YoucannotpassThedarkfirewillnotavailyouGobacktotheShadowYoushallnotpass
+    validity: 86400000
+
+scheduler:
+  cron:
+    pattern:
+      expired: "0 0 0/12 * * ?" #Every 12 hours (00:00 and 12:00), Every day
+      applied: "0 10 0 * * ?" #Every 24 hours (00:10), Every day
+  certain:
+    time:
+      before: 86400000

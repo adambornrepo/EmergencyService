@@ -1,6 +1,7 @@
 package com.tech.payload.request.update.abstracts;
 
 import com.tech.entites.concretes.Address;
+import com.tech.payload.annotations.custom.PhoneNumber;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -22,12 +23,12 @@ public class EmployeeUpdateRequest {
     @Size(min = 2,max = 50,message = "{validation.size.field}")
     private String lastName;
 
-    // TODO: 6.06.2023 validation regex
+    @PhoneNumber
     private String phoneNumber;
 
     @Valid
     private Address address;
 
-    // TODO: 6.06.2023 validation regex
+    @Size(min = 8, message = "{validation.size.password}")
     private String password;
 }

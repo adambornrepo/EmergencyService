@@ -3,6 +3,8 @@ package com.tech.payload.request.register.abstracts;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tech.entites.concretes.Address;
 import com.tech.entites.enums.Gender;
+import com.tech.payload.annotations.custom.PhoneNumber;
+import com.tech.payload.annotations.custom.SSN;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -39,18 +41,18 @@ public abstract class BaseRegistrationRequest implements Serializable {
     @NotNull(message = "{validation.null.gender}")
     private Gender gender;
 
-    // TODO: 6.06.2023 validation regex
+    @SSN
     @NotNull(message = "{validation.null.ssn}")
     private String ssn;
 
-    // TODO: 6.06.2023 validation regex
+    @PhoneNumber
     @NotNull(message = "{validation.null.phone}")
     private String phoneNumber;
 
     @Valid
     private Address address;
 
-    // TODO: 6.06.2023 validation regex
+    @Size(min = 8, message = "{validation.size.password}")
     @NotNull(message = "{validation.null.password}")
     private String password;
 

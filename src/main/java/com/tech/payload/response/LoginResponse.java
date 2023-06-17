@@ -15,7 +15,6 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoginResponse implements Serializable {
 
-    private String success;
     private String token;
     private String ssn;
 

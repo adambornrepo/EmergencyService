@@ -1,5 +1,6 @@
 package com.tech.payload.request;
 
+import com.tech.payload.annotations.custom.SSN;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -24,6 +25,7 @@ public class AppointmentCreationRequest implements Serializable {
     @NotNull(message = "{validation.null.doctor.id}")
     private Long doctorId;
 
+    @SSN
     @NotNull(message = "{validation.null.ssn}")
     private String patientSsn;
 

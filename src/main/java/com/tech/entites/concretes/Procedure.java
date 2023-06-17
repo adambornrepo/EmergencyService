@@ -2,6 +2,7 @@ package com.tech.entites.concretes;
 
 import com.tech.entites.abstracts.Employee;
 import com.tech.entites.abstracts.MedicalEmployee;
+import com.tech.entites.enums.ProcedureStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,14 @@ public class Procedure implements Serializable {
     private Long id;
 
     @Column(nullable = false, length = 150)
+    private String doctorNote;
+
+    @Column(length = 150)
     private String applied;
+
+    @Enumerated(EnumType.STRING)
+    //@Column(length = 20, nullable = false)
+    ProcedureStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appointment_id")
@@ -41,6 +49,9 @@ public class Procedure implements Serializable {
 
     private long createdAt;
 
+    private long updatedAt;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
     private MedicalEmployee employee;
@@ -48,6 +59,11 @@ public class Procedure implements Serializable {
     @PrePersist
     public void creationTime() {
         setCreatedAt(System.currentTimeMillis());
+    }
+
+    @PreUpdate
+    public void updateTime() {
+        setUpdatedAt(System.currentTimeMillis());
     }
 
 }

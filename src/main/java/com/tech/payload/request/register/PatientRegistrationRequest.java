@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tech.entites.concretes.Address;
 import com.tech.entites.concretes.Patient;
 import com.tech.entites.enums.Gender;
+import com.tech.payload.annotations.custom.PhoneNumber;
+import com.tech.payload.annotations.custom.SSN;
 import com.tech.payload.request.register.abstracts.BaseRegistrationRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -43,11 +45,11 @@ public class PatientRegistrationRequest implements Serializable, Supplier<Patien
     @NotNull(message = "{validation.null.gender}")
     private Gender gender;
 
-    // TODO: 6.06.2023 validation regex
+    @SSN
     @NotNull(message = "{validation.null.ssn}")
     private String ssn;
 
-    // TODO: 6.06.2023 validation regex
+    @PhoneNumber
     @NotNull(message = "{validation.null.phone}")
     private String phoneNumber;
 

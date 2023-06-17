@@ -1,8 +1,8 @@
 package com.tech.payload.response.simple;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.Zone;
+import com.tech.security.role.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

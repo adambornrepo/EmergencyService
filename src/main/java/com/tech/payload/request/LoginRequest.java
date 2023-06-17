@@ -1,5 +1,6 @@
 package com.tech.payload.request;
 
+import com.tech.payload.annotations.custom.SSN;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -15,11 +16,11 @@ import java.io.Serializable;
 @Builder
 public class LoginRequest implements Serializable {
 
-    // TODO: 6.06.2023 validation regex
+    @SSN
     @NotNull(message = "{validation.null.ssn}")
     private String ssn;
 
-    // TODO: 6.06.2023 validation regex
+    @Size(min = 8, message = "{validation.size.password}")
     @NotNull(message = "{validation.null.password}")
     private String password;
 }

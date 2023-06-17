@@ -56,7 +56,6 @@ public class PrescriptionService {
 
         Doctor doctorFound = doctorService.getOneDoctorById(request.getDoctorId());
 
-
         String onePieceMedicines = String.join("¨!¨", request.getMedicines());
         var savePrescription = Prescription.builder()
                 .medicines(onePieceMedicines)

@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.SuperAdmin;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -11,11 +10,13 @@ import com.tech.payload.request.update.SuperAdminUpdateRequest;
 import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedSuperAdminResponse;
 import com.tech.repository.SuperAdminRepository;
+import com.tech.security.role.Role;
 import com.tech.utils.GeneralUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +28,7 @@ public class SuperAdminService {
     private final SuperAdminRepository superAdminRepository;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedSuperAdminResponse> getOneSuperAdminByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -72,7 +74,7 @@ public class SuperAdminService {
     public ResponseEntity<DetailedSuperAdminResponse> saveSuperAdmin(SuperAdminRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         SuperAdmin superAdmin = request.get();
-        superAdmin.setPassword(superAdmin.getPassword()); // TODO: 6.06.2023 Encode
+        superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
         superAdmin.setRole(Role.SUPER_ADMIN);
         SuperAdmin saved = superAdminRepository.save(superAdmin);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(saved), HttpStatus.CREATED);
@@ -87,7 +89,7 @@ public class SuperAdminService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         SuperAdmin updated = superAdminRepository.save(found);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -97,7 +99,9 @@ public class SuperAdminService {
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
         }
-        if (superAdminRepository.isLastSuperAdmin()) throw new UnsuitableRequestException("");
+        if (superAdminRepository.isLastSuperAdmin()) {
+            throw new UnsuitableRequestException(apiMessages.getMessage("error.last.super-admin"));
+        }
         String mark = System.currentTimeMillis() + "¨!¨";
         found.setSsn(mark + found.getSsn());
         found.setPhoneNumber(mark + found.getPhoneNumber());
@@ -107,6 +111,9 @@ public class SuperAdminService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.super-admin.delete")).build(),
                 HttpStatus.OK
         );
+    }
+    public boolean isExistsAtLeastOneSuperAdmin(){
+        return superAdminRepository.checkSuperAdminExistence();
     }
 
     private DetailedSuperAdminResponse buildDetailedSuperAdminResponse(SuperAdmin superAdmin) {

@@ -5,9 +5,11 @@ import com.tech.entites.abstracts.MedicalEmployee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Procedure;
 import com.tech.entites.enums.AppointmentStatus;
+import com.tech.entites.enums.ProcedureStatus;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.payload.request.ProcedureCreationRequest;
+import com.tech.payload.request.ProcedureCreationRequestForDoctor;
 import com.tech.payload.request.update.ProcedureUpdateRequest;
 import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.ProcedureResponse;
@@ -54,26 +56,50 @@ public class ProcedureService {
         return procedureRepository.findByEmployee_Id(employeeId, pageable).map(this::buildProcedureResponse);
     }
 
-    public ResponseEntity<ProcedureResponse> saveProcedure(ProcedureCreationRequest request) {
+    public ResponseEntity<ProcedureResponse> saveProcedureForDoctor(ProcedureCreationRequestForDoctor request) {
+
         Appointment appointment = appointmentService.getOneAppointmentById(request.getAppointmentId());
         if (!appointment.getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
             throw new UnsuitableRequestException(
                     String.format(apiMessages.getMessage("error.no.action.procedure.app"), appointment.getStatus())
             );
         }
+
+        var saveProcedure = Procedure.builder()
+                .applied(request.getApplied())
+                .appointment(appointment)
+                .employee(appointment.getDoctor())
+                .status(ProcedureStatus.APPLIED)
+                .isDisabled(false)
+                .build();
+        Procedure saved = procedureRepository.save(saveProcedure);
+        return new ResponseEntity<>(buildProcedureResponse(saved), HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<ProcedureResponse> saveProcedure(ProcedureCreationRequest request) {
+
+        Appointment appointment = appointmentService.getOneAppointmentById(request.getAppointmentId());
+        if (!appointment.getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
+            throw new UnsuitableRequestException(
+                    String.format(apiMessages.getMessage("error.no.action.procedure.app"), appointment.getStatus())
+            );
+        }
+
         MedicalEmployee employee = coordinationService.getOneMedicalEmployeeById(request.getEmployeeId());
         if (employee == null) {
             throw new ResourceNotFoundException(
                     String.format(apiMessages.getMessage("error.not.found.medical.employee.id"), request.getEmployeeId())
             );
         }
+
         var saveProcedure = Procedure.builder()
-                .applied(request.getApplied())
+                .doctorNote(request.getDoctorNote())
+                .applied(null)
                 .appointment(appointment)
                 .employee(employee)
+                .status(ProcedureStatus.NOT_APPLIED)
                 .isDisabled(false)
                 .build();
-
         Procedure saved = procedureRepository.save(saveProcedure);
         return new ResponseEntity<>(buildProcedureResponse(saved), HttpStatus.CREATED);
     }
@@ -97,7 +123,7 @@ public class ProcedureService {
                     String.format(apiMessages.getMessage("error.no.action.procedure.app"), foundProcedure.getAppointment().getStatus())
             );
         }
-        if (!foundProcedure.getEmployee().getId().equals(request.getEmployeeId())){
+        if (!foundProcedure.getEmployee().getId().equals(request.getEmployeeId())) {
             throw new UnsuitableRequestException(
                     String.format(apiMessages.getMessage("error.no.action.procedure.employee"), request.getEmployeeId())
             );
@@ -121,7 +147,9 @@ public class ProcedureService {
         /**
          * TODO Anlık login olan ile procedure ü gerçekleştiren aynı kişi mi
          */
+        foundProcedure.setStatus(ProcedureStatus.DELETED);
         foundProcedure.setDisabled(true);
+
         Procedure deleted = procedureRepository.save(foundProcedure);
         return ResponseEntity.ok(
                 ApiResponse.builder()
@@ -140,9 +168,32 @@ public class ProcedureService {
                 .employeeFirstName(procedure.getEmployee().getFirstName())
                 .employeeLastName(procedure.getEmployee().getLastName())
                 .createdAt(GeneralUtils.convertMillisToLocalDateTime(procedure.getCreatedAt()))
+                .updatedAt(GeneralUtils.convertMillisToLocalDateTime(procedure.getUpdatedAt()))
                 .isDisabled(procedure.isDisabled())
                 .build();
     }
 
+    public ResponseEntity<ProcedureResponse> completeProcedure(Long id) {
+
+        /**
+         * TODO Anlık login olan ile procedure ü gerçekleştiren aynı kişi mi
+         */
+
+        Procedure foundProcedure = getOneProcedureById(id);
+        foundProcedure.setStatus(ProcedureStatus.APPLIED);
+        Procedure updated = procedureRepository.save(foundProcedure);
+        return null;
+    }
+
+
+    public ResponseEntity<List<ProcedureResponse>> getAllActiveProcedureByEmployeeId(Long id) {
+        return ResponseEntity.ok(
+                procedureRepository.
+                        findByEmployee_IdAndStatus(id, ProcedureStatus.NOT_APPLIED)
+                        .stream()
+                        .map(this::buildProcedureResponse)
+                        .collect(Collectors.toList())
+        );
+    }
 
 }

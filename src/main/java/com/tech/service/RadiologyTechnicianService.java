@@ -2,7 +2,6 @@ package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.RadiologyTechnician;
-import com.tech.entites.enums.Role;
 import com.tech.entites.enums.UniqueField;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
@@ -13,6 +12,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedRadiologyTechResponse;
 import com.tech.payload.response.simple.SimpleRadiologyTechResponse;
 import com.tech.repository.RadiologyTechnicianRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,10 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j//logger
 @Transactional
@@ -34,6 +37,7 @@ public class RadiologyTechnicianService {
     private final RadiologyTechnicianMapper radiologyTechMapper;
     private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
+    private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedRadiologyTechResponse> getOneRadiologyTechByUniqueField(UniqueField searchIn, String value) {
         if (searchIn.equals(UniqueField.ID)) {
@@ -88,7 +92,7 @@ public class RadiologyTechnicianService {
     public ResponseEntity<DetailedRadiologyTechResponse> saveRadiologyTech(RadiologyTechRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         RadiologyTechnician radiologyTech = request.get();
-        radiologyTech.setPassword(radiologyTech.getPassword()); // TODO: 6.06.2023 Encode
+        radiologyTech.setPassword(passwordEncoder.encode(radiologyTech.getPassword()));
         radiologyTech.setRole(Role.RADIOLOGY_TECHNICIAN);
         RadiologyTechnician saved = radiologyTechRepository.save(radiologyTech);
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(saved), HttpStatus.CREATED);
@@ -104,7 +108,7 @@ public class RadiologyTechnicianService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(found.getPassword());// TODO: 6.06.2023 Encode
+        found.setPassword(passwordEncoder.encode(found.getPassword()));
         RadiologyTechnician updated = radiologyTechRepository.save(found);
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(updated), HttpStatus.ACCEPTED);
     }
@@ -124,5 +128,12 @@ public class RadiologyTechnicianService {
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.rad-tech.delete")).build(),
                 HttpStatus.OK
         );
+    }
+
+    public List<SimpleRadiologyTechResponse> getAllActiveRadiologyTech() {
+        return radiologyTechRepository.findByIsDisabled(false)
+                .stream()
+                .map(radiologyTechMapper::buildSimpleRadiologyTechResponse)
+                .collect(Collectors.toList());
     }
 }

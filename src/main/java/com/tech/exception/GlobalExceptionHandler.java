@@ -3,8 +3,14 @@ package com.tech.exception;
 import com.tech.configuration.ApiMessages;
 import com.tech.exception.custom.ConflictException;
 import com.tech.exception.custom.ResourceNotFoundException;
+import com.tech.exception.custom.SchedulerException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.payload.response.ApiResponse;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +37,7 @@ public class GlobalExceptionHandler {
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException ex) {
         apiResponse.setMessage(ex.getMessage());
@@ -57,6 +64,12 @@ public class GlobalExceptionHandler {
         apiResponse.setMessage(ex.getMessage());
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(SchedulerException.class)
+    public ResponseEntity<?> handleSchedulerException(SchedulerException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
