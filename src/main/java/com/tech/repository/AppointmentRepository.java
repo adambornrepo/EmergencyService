@@ -5,6 +5,7 @@ import com.tech.entites.enums.AppointmentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+    List<Appointment> findByAppointmentDateOrderByDoctor_FirstNameAscCreatedAtAsc(LocalDate appointmentDate);
+    List<Appointment> findByPatient_SsnOrderByCreatedAtDesc(String ssn);
+    List<Appointment> findByDoctor_IdAndStatusOrderByCreatedAtAsc(Long id, AppointmentStatus status);
     List<Appointment> findByStatusAndCreatedAtLessThanAndProceduresNullAndPrescriptionNull(AppointmentStatus status, long createdAt);
 
     @Query("SELECT a FROM Appointment a WHERE a.status = :status AND a.createdAt < :createdAt AND (a.procedures IS NOT NULL OR a.prescription IS NOT NULL)")

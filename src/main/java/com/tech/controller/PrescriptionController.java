@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,9 +43,10 @@ public class PrescriptionController {
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(
             @RequestParam("id") Long id,
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
-        return prescriptionService.getAllPrescriptionByDoctorId(id, pageable);
+        return prescriptionService.getAllPrescriptionByDoctorId(id, pageable, userDetails);
     }
 
     @GetMapping("/get/appointment")
@@ -60,6 +63,7 @@ public class PrescriptionController {
     ) {
         return prescriptionService.getAllPrescriptionByPatientId(id, pageable);
     }
+
     @GetMapping("/getAll/patient/ssn")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientSsn(
@@ -71,20 +75,25 @@ public class PrescriptionController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('chief:create','doctor:create')")
-    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(@Valid @RequestBody PrescriptionCreationRequest request) {
-        return prescriptionService.savePrescription(request);
+    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(
+            @Valid @RequestBody PrescriptionCreationRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return prescriptionService.savePrescription(request, userDetails);
     }
 
     @PatchMapping("/update")
     @PreAuthorize("hasAnyAuthority('chief:update','doctor:update')")
-    public ResponseEntity<DetailedPrescriptionResponse> updatePrescription(@Valid @RequestBody PrescriptionUpdateRequest request, @RequestParam("id") Long id) {
-        return prescriptionService.updatePrescription(request, id);
+    public ResponseEntity<DetailedPrescriptionResponse> updatePrescription(
+            @Valid @RequestBody PrescriptionUpdateRequest request,
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return prescriptionService.updatePrescription(request, id, userDetails);
     }
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasAnyAuthority('chief:delete','doctor:delete')")
-    public ResponseEntity<ApiResponse> deletePrescription(@RequestParam("id") Long id) {
-        return prescriptionService.deletePrescription(id);
+    public ResponseEntity<ApiResponse> deletePrescription(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return prescriptionService.deletePrescription(id, userDetails);
     }
 
 

@@ -1,10 +1,12 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Doctor;
 import com.tech.entites.concretes.Prescription;
 import com.tech.entites.enums.AppointmentStatus;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.mapper.PrescriptionMapper;
@@ -14,6 +16,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedPrescriptionResponse;
 import com.tech.payload.response.simple.SimplePrescriptionResponse;
 import com.tech.repository.PrescriptionRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,16 +41,16 @@ public class PrescriptionService {
     private final DoctorService doctorService;
     private final AppointmentService appointmentService;
     private final PrescriptionMapper prescriptionMapper;
+    private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
 
-    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(PrescriptionCreationRequest request) {
+    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(PrescriptionCreationRequest request, UserDetails userDetails) {
         Appointment appointmentFound = appointmentService.getOneAppointmentById(request.getAppointmentId());
-        /**
-         * TODO Bu kısım login olan doctordan da alınabilirdi
-         */
-        if (!appointmentFound.getDoctor().getId().equals(request.getDoctorId())) {
-            throw new UnsuitableRequestException(
-                    String.format(apiMessages.getMessage("error.no.action.prescription.doctor"), request.getDoctorId())
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+
+        if (!appointmentFound.getDoctor().getId().equals(employee.getId())) {
+            throw new ForbiddenAccessException(
+                    String.format(apiMessages.getMessage("error.no.action.prescription.doctor"), employee.getId())
             );
         }
         if (!appointmentFound.getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
@@ -55,7 +59,7 @@ public class PrescriptionService {
             );
         }
 
-        Doctor doctorFound = doctorService.getOneDoctorById(request.getDoctorId());
+        Doctor doctorFound = doctorService.getOneDoctorById(employee.getId());
 
         String onePieceMedicines = String.join("¨!¨", request.getMedicines());
         var savePrescription = Prescription.builder()
@@ -68,11 +72,13 @@ public class PrescriptionService {
         return new ResponseEntity<>(prescriptionMapper.buildDetailedPrescriptionResponse(saved), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<DetailedPrescriptionResponse> updatePrescription(PrescriptionUpdateRequest request, Long id) {
-        Prescription foundPrescription = getOnePrescriptionById(id).toBuilder().build();
-        if (!request.getDoctorId().equals(foundPrescription.getDoctor().getId())) {
-            throw new UnsuitableRequestException(
-                    String.format(apiMessages.getMessage("error.no.action.prescription.doctor"), request.getDoctorId())
+    public ResponseEntity<DetailedPrescriptionResponse> updatePrescription(PrescriptionUpdateRequest request, Long id, UserDetails userDetails) {
+        Prescription foundPrescription = getOnePrescriptionById(id);
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+
+        if (!employee.getId().equals(foundPrescription.getDoctor().getId())) {
+            throw new ForbiddenAccessException(
+                    String.format(apiMessages.getMessage("error.no.action.prescription.doctor"), employee.getId())
             );
         }
         if (!foundPrescription.getAppointment().getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
@@ -81,7 +87,7 @@ public class PrescriptionService {
             );
         }
 
-        Doctor doctorFound = doctorService.getOneDoctorById(request.getDoctorId());
+        Doctor doctorFound = doctorService.getOneDoctorById(employee.getId());
 
         if (!request.getMedicines().isEmpty()) {
             String onePieceMedicines = String.join("¨!¨", request.getMedicines());
@@ -100,10 +106,15 @@ public class PrescriptionService {
                 );
     }
 
-    public ResponseEntity<ApiResponse> deletePrescription(Long id) {
+    public ResponseEntity<ApiResponse> deletePrescription(Long id, UserDetails userDetails) {
         Prescription deletePrescription = getOnePrescriptionById(id);
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
 
-        // TODO: 13.06.2023 Bu methoda ulaşan docktor id si anlık login den bun ve eşle, eşleşmiyorsa hata at
+        if (!deletePrescription.getDoctor().getId().equals(employee.getId())) {
+            throw new ForbiddenAccessException(
+                    String.format(apiMessages.getMessage("error.no.action.prescription.doctor"), employee.getId())
+            );
+        }
 
         if (!deletePrescription.getAppointment().getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
             throw new UnsuitableRequestException(
@@ -130,7 +141,13 @@ public class PrescriptionService {
     }
 
 
-    public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(Long doctorId, Pageable pageable) {
+    public Page<SimplePrescriptionResponse> getAllPrescriptionByDoctorId(Long doctorId, Pageable pageable, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.DOCTOR) && !employee.getId().equals(doctorId)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.doctor.info"));
+        }
+
         return prescriptionRepository.findByDoctor_Id(doctorId, pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
 

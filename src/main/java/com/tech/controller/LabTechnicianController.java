@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +27,12 @@ public class LabTechnicianController {
 
     @GetMapping("/get")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','lab_tech:read')")
-    public ResponseEntity<DetailedLabTechResponse> getOneLabTech(@RequestParam("in") UniqueField searchIn, @RequestParam("val")String value) {
+    public ResponseEntity<DetailedLabTechResponse> getOneLabTech(@RequestParam("in") UniqueField searchIn, @RequestParam("val") String value) {
         return labTechService.getOneLabTechByUniqueField(searchIn, value);
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','lab_tech:read','psr:read')")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
     public Page<SimpleLabTechResponse> getAllLabTech(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
@@ -39,8 +41,9 @@ public class LabTechnicianController {
     ) {
         return labTechService.getAllLabTech(page, size, sort, type);
     }
+
     @GetMapping("/getAll/active")
-    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','lab_tech:read','psr:read')")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','lab_tech:read','psr:read')")
     public List<SimpleLabTechResponse> getAllActiveLabTech() {
         return labTechService.getAllActiveLabTech();
     }
@@ -53,14 +56,17 @@ public class LabTechnicianController {
 
     @PatchMapping("/update")
     @PreAuthorize("hasAnyAuthority('admin:update','lab_tech:update')")
-    public ResponseEntity<DetailedLabTechResponse> updateLabTech(@Valid @RequestBody LabTechUpdateRequest request, @RequestParam("id") Long id) {
-        return labTechService.updateLabTech(request, id);
+    public ResponseEntity<DetailedLabTechResponse> updateLabTech(
+            @Valid @RequestBody LabTechUpdateRequest request,
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return labTechService.updateLabTech(request, id, userDetails);
     }
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasAnyAuthority('admin:delete','chief:delete','lab_tech:delete')")
-    public ResponseEntity<ApiResponse> deleteLabTech(@RequestParam("id") Long id) {
-        return labTechService.deleteLabTech(id);
+    public ResponseEntity<ApiResponse> deleteLabTech(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return labTechService.deleteLabTech(id, userDetails);
     }
 
 

@@ -26,7 +26,7 @@ public class PatientController {
 
     @GetMapping("/get")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
-    public ResponseEntity<DetailedPatientResponse> getOnePatient(@RequestParam("in") UniqueField searchIn, @RequestParam("val")String value) {
+    public ResponseEntity<DetailedPatientResponse> getOnePatient(@RequestParam("in") UniqueField searchIn, @RequestParam("val") String value) {
         return patientService.getOnePatientByUniqueField(searchIn, value);
     }
 
@@ -39,19 +39,19 @@ public class PatientController {
     }
 
     @PostMapping("/register")
-    @PreAuthorize("hasAnyAuthority('admin:create','chief:create','psr:create')")
+    @PreAuthorize("hasAnyAuthority('admin:create','psr:create')")
     public ResponseEntity<DetailedPatientResponse> savePatient(@Valid @RequestBody PatientRegistrationRequest request) {
         return patientService.savePatient(request);
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasAnyAuthority('admin:update','chief:update','psr:update')")
+    @PreAuthorize("hasAnyAuthority('admin:update','psr:update')")
     public ResponseEntity<DetailedPatientResponse> updatePatient(@Valid @RequestBody PatientUpdateRequest request, @RequestParam("ssn") String ssn) {
         return patientService.updatePatient(request, ssn);
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAnyAuthority('admin:delete','chief:delete','psr:delete')")
+    @PreAuthorize("hasAnyAuthority('admin:delete','psr:delete')")
     public ResponseEntity<ApiResponse> deletePatient(@RequestParam("ssn") String ssn) {
         return patientService.deletePatient(ssn);
     }

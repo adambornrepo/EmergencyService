@@ -1,8 +1,11 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Nurse;
 import com.tech.entites.enums.UniqueField;
+import com.tech.entites.enums.Zone;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.mapper.NurseMapper;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +101,13 @@ public class NurseService {
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(saved), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<DetailedNurseResponse> updateNurse(NurseUpdateRequest request, Long id) {
+    public ResponseEntity<DetailedNurseResponse> updateNurse(NurseUpdateRequest request, Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.NURSE) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.nurse.update"));
+        }
+
         Nurse found = getOneNurseById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -111,7 +121,13 @@ public class NurseService {
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(updated), HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<ApiResponse> deleteNurse(Long id) {
+    public ResponseEntity<ApiResponse> deleteNurse(Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.NURSE) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.nurse.delete"));
+        }
+
         Nurse found = getOneNurseById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -127,10 +143,29 @@ public class NurseService {
         );
     }
 
-    public List<SimpleNurseResponse> getAllActiveNurse() {
-        return nurseRepository.findByIsDisabled(false)
-                .stream()
-                .map(nurseMapper::buildSimpleNurseResponse)
-                .collect(Collectors.toList());
+    public List<SimpleNurseResponse> getAllActiveNurse(Zone zone) {
+        if (zone == null) {
+            return nurseRepository.findByIsDisabledOrderByFirstNameAsc(false)
+                    .stream()
+                    .map(nurseMapper::buildSimpleNurseResponse)
+                    .collect(Collectors.toList());
+        } else {
+            return nurseRepository.findByIsDisabledAndZoneOrderByZoneAscFirstNameAsc(false, zone)
+                    .stream()
+                    .map(nurseMapper::buildSimpleNurseResponse)
+                    .collect(Collectors.toList());
+        }
     }
+
+    public ResponseEntity<DetailedNurseResponse> updateNurseZone(Zone zone, Long id) {
+        Nurse found = getOneNurseById(id);
+        if (found.isDisabled()) {
+            throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
+        }
+        found.setZone(zone);
+        Nurse updated = nurseRepository.save(found);
+        return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(updated), HttpStatus.ACCEPTED);
+    }
+
+
 }

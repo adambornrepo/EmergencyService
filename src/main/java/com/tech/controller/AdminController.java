@@ -15,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,15 +55,19 @@ public class AdminController {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasAuthority('admin:update')")
-    public ResponseEntity<DetailedAdminResponse> updateAdmin(@Valid @RequestBody AdminUpdateRequest request, @RequestParam("id") Long id) {
-        return adminService.updateAdmin(request, id);
+    @PreAuthorize("hasAnyAuthority('super_admin:update','admin:update')")
+    public ResponseEntity<DetailedAdminResponse> updateAdmin(
+            @Valid @RequestBody AdminUpdateRequest request,
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        return adminService.updateAdmin(request, id, userDetails);
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAuthority('admin:delete')")
-    public ResponseEntity<ApiResponse> deleteAdmin(@RequestParam("id") Long id) {
-        return adminService.deleteAdmin(id);
+    @PreAuthorize("hasAnyAuthority('super_admin:delete','admin:delete')")
+    public ResponseEntity<ApiResponse> deleteAdmin(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return adminService.deleteAdmin(id, userDetails);
     }
 
 

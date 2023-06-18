@@ -8,11 +8,13 @@ import com.tech.entites.concretes.Procedure;
 import com.tech.entites.enums.AppointmentStatus;
 import com.tech.entites.enums.ProcedureStatus;
 import com.tech.exception.custom.ConflictException;
+import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.repository.*;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -61,6 +63,7 @@ public class CheckAndCoordinationService {
 
 
     public void checkDuplicate(String ssn, String phoneNumber) {
+
         if (StringUtils.hasText(ssn)) {
             for (BaseEmployeeRepository<?, ?> repository : employeeRepositories) {
                 if (repository.existsBySsn(ssn)) {
@@ -107,6 +110,13 @@ public class CheckAndCoordinationService {
         var superAdmin = superAdminRepository.findBySsnEquals(username);
         if (superAdmin.isPresent()) return superAdmin;
         return Optional.empty();
+    }
+
+    public Employee getOneEmployeeByUserDetails(UserDetails userDetails) {
+        return getOneEmployeeBySsn(userDetails.getUsername()) // Username = SSN
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        String.format(apiMessages.getMessage("error.not.found.employee.unexpected"), userDetails.getUsername())
+                ));
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.tech.service;
 import com.tech.configuration.ApiMessages;
 import com.tech.entites.concretes.Patient;
 import com.tech.entites.enums.UniqueField;
+import com.tech.exception.custom.ConflictException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.mapper.PatientMapper;
@@ -81,9 +82,8 @@ public class PatientService {
         return patientRepository.findAll(pageable).map(patientMapper::buildSimplePatientResponse);
     }
 
-    // TODO: 7.06.2023 buyuk sorun
     public ResponseEntity<DetailedPatientResponse> savePatient(PatientRegistrationRequest request) {
-        coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
+        checkDuplicateForPatient(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Patient patient = request.get();
         patient.setRole(Role.PATIENT);
         Patient saved = patientRepository.save(patient);
@@ -96,7 +96,7 @@ public class PatientService {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.ssn"), ssn));
         }
         if (!found.getPhoneNumber().equals(request.getPhoneNumber())) {
-            coordinationService.checkDuplicate(null, request.getPhoneNumber());
+            checkDuplicateForPatient(null, request.getPhoneNumber());
         }
         request.accept(found);
         Patient updated = patientRepository.save(found);
@@ -117,4 +117,14 @@ public class PatientService {
                 HttpStatus.OK
         );
     }
+
+    private void checkDuplicateForPatient(String ssn, String phoneNumber) {
+        if (patientRepository.existsBySsn(ssn)) {
+            throw new ConflictException(String.format(apiMessages.getMessage("error.conflict.ssn"), ssn));
+        }
+        if (patientRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new ConflictException(String.format(apiMessages.getMessage("error.conflict.phone"), phoneNumber));
+        }
+    }
+
 }

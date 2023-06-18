@@ -21,6 +21,4 @@ public class AppointmentUpdateRequest implements Serializable {
 
     @Size(max = 100, message = "{validation.size.symptoms}")
     private String symptoms;
-
-    private AppointmentStatus status;
 }

@@ -51,4 +51,4 @@ scheduler:
       applied: "0 10 0 * * ?" #Every 24 hours (00:10), Every day
   certain:
     time:
-      before: 86400000
+      before: 172800000

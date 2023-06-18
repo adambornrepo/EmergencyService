@@ -40,8 +40,9 @@ public class AuthenticationService {
         revokeAllTokensByEmployeeId(employee.getId());
         saveToken(employee, jwtToken);
         return LoginResponse.builder()
-                .ssn(employee.getSsn())
                 .token(jwtToken)
+                .ssn(employee.getSsn())
+                .id(employee.getId())
                 .build();
     }
 

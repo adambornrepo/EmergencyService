@@ -1,8 +1,11 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Doctor;
 import com.tech.entites.enums.UniqueField;
+import com.tech.entites.enums.Zone;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.mapper.DoctorMapper;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +45,7 @@ public class DoctorService {
     private final PasswordEncoder passwordEncoder;
 
     public ResponseEntity<DetailedDoctorResponse> getOneDoctorByUniqueField(UniqueField searchIn, String value) {
+
         if (searchIn.equals(UniqueField.ID)) {
             if (!value.matches("\\d+")) {
                 throw new UnsuitableRequestException(apiMessages.getMessage("error.format.id"));
@@ -50,14 +55,15 @@ public class DoctorService {
                 );
             }
         }
+
         return switch (searchIn) {
             case PHONE_NUMBER -> new ResponseEntity<>(
                     doctorMapper.buildDetailedDoctorResponse(
                             doctorRepository
                                     .findByPhoneNumberEquals(value)
                                     .orElseThrow(() -> new ResourceNotFoundException(
-                                            String.format(apiMessages.getMessage("error.not.found.doctor.phone"), value
-                                            )))
+                                            String.format(apiMessages.getMessage("error.not.found.doctor.phone"), value)
+                                    ))
                     ),
                     HttpStatus.OK
             );
@@ -65,13 +71,14 @@ public class DoctorService {
                     doctorMapper.buildDetailedDoctorResponse(
                             doctorRepository.findBySsnEquals(value)
                                     .orElseThrow(() -> new ResourceNotFoundException(
-                                            String.format(apiMessages.getMessage("error.not.found.doctor.ssn"), value
-                                            )))
+                                            String.format(apiMessages.getMessage("error.not.found.doctor.ssn"), value)
+                                    ))
                     ),
                     HttpStatus.OK
             );
             default -> throw new UnsuitableRequestException(apiMessages.getMessage("error.invalid.search"));
         };
+
     }
 
     public Doctor getOneDoctorById(Long id) {
@@ -97,7 +104,13 @@ public class DoctorService {
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(saved), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<DetailedDoctorResponse> updateDoctor(DoctorUpdateRequest request, Long id) {
+    public ResponseEntity<DetailedDoctorResponse> updateDoctor(DoctorUpdateRequest request, Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if ((employee.getRole().equals(Role.DOCTOR) || employee.getRole().equals(Role.CHIEF)) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.doctor.update"));
+        }
+
         Doctor found = getOneDoctorById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -111,8 +124,18 @@ public class DoctorService {
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(updated), HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<ApiResponse> deleteDoctor(Long id) {
+    public ResponseEntity<ApiResponse> deleteDoctor(Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.DOCTOR) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.doctor.delete"));
+        }
+
         Doctor found = getOneDoctorById(id);
+        if (found.getRole().equals(Role.CHIEF)) {
+            found.setRole(Role.DOCTOR);
+        }
+
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
         }
@@ -132,12 +155,15 @@ public class DoctorService {
         Doctor chiefPhysician = getChiefPhysician();
         if (chiefPhysician == null) {
             doctor.setRole(Role.CHIEF);
+            doctor.setZone(Zone.NONE);
             Doctor assigned = doctorRepository.save(doctor);
             return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(assigned), HttpStatus.ACCEPTED);
         }
         chiefPhysician.setRole(Role.DOCTOR);
+        chiefPhysician.setZone(doctor.getZone());
         Doctor formerChief = doctorRepository.save(chiefPhysician);
         doctor.setRole(Role.CHIEF);
+        doctor.setZone(Zone.NONE);
         Doctor assigned = doctorRepository.save(doctor);
         return ResponseEntity.ok(doctorMapper.buildDetailedDoctorResponse(assigned));
     }
@@ -147,10 +173,28 @@ public class DoctorService {
     }
 
 
-    public List<SimpleDoctorResponse> getAllActiveDoctor() {
-        return doctorRepository.findByIsDisabled(false)
-                .stream()
-                .map(doctorMapper::buildSimpleDoctorResponse)
-                .collect(Collectors.toList());
+    public List<SimpleDoctorResponse> getAllActiveDoctor(Zone zone) {
+        if (zone == null) {
+            return doctorRepository.findByIsDisabledOrderByFirstNameAsc(false)
+                    .stream()
+                    .map(doctorMapper::buildSimpleDoctorResponse)
+                    .collect(Collectors.toList());
+        } else {
+            return doctorRepository.findByIsDisabledAndZoneOrderByZoneAscFirstNameAsc(false, zone)
+                    .stream()
+                    .map(doctorMapper::buildSimpleDoctorResponse)
+                    .collect(Collectors.toList());
+        }
     }
+
+    public ResponseEntity<DetailedDoctorResponse> updateDoctorZone(Zone zone, Long id) {
+        Doctor found = getOneDoctorById(id);
+        if (found.isDisabled()) {
+            throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
+        }
+        found.setZone(zone);
+        Doctor updated = doctorRepository.save(found);
+        return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(updated), HttpStatus.ACCEPTED);
+    }
+
 }

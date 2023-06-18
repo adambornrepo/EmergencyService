@@ -14,9 +14,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/appointment")
@@ -33,7 +36,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/getAll")
-    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read','psr:read')")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
     public Page<SimpleAppointmentResponse> getAllAppointment(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -58,14 +61,26 @@ public class AppointmentController {
         return appointmentService.getAllInProgressAppointmentByDoctorId(id, pageable);
     }
 
+    @GetMapping("/getAll/list/inProgress/doctor")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
+    public List<SimpleAppointmentResponse> getAllInProgressAppointmentListByDoctorId(@RequestParam("id") Long id) {
+        return appointmentService.getAllInProgressAppointmentListByDoctorId(id);
+    }
+
 
     @GetMapping("/getAll/patient")
-    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read','psr:read')")
-    public Page<SimpleAppointmentResponse> getAllAppointmentByPatientId(
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
+    public Page<SimpleAppointmentResponse> getAllAppointmentByPatientSsn(
             @RequestParam("ssn") String ssn,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return appointmentService.getAllAppointmentByPatientSsn(ssn, pageable);
+    }
+
+    @GetMapping("/getAll/list/patient")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
+    public List<SimpleAppointmentResponse> getAllAppointmentListByPatientSsn(@RequestParam("ssn") String ssn) {
+        return appointmentService.getAllAppointmentListByPatientSsn(ssn);
     }
 
     @GetMapping("/getAll/date")
@@ -75,6 +90,12 @@ public class AppointmentController {
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         return appointmentService.getAllAppointmentByDate(date, pageable);
+    }
+
+    @GetMapping("/getAll/list/date")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
+    public List<SimpleAppointmentResponse> getAllAppointmentListByDate(@RequestParam("on") LocalDate date) {
+        return appointmentService.getAllAppointmentListByDate(date);
     }
 
     @PostMapping("/create")
@@ -98,9 +119,11 @@ public class AppointmentController {
     }
 
     @PatchMapping("/complete")
-    @PreAuthorize("hasAnyAuthority('admin:update','chief:update','doctor:update','nurse:update')")
-    public ResponseEntity<ApiResponse> completeAppointment(@RequestParam("id") Long id) {
-        return appointmentService.completeAppointment(id);
+    @PreAuthorize("hasAnyAuthority('admin:update','chief:update','doctor:update')")
+    public ResponseEntity<ApiResponse> completeAppointment(
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return appointmentService.completeAppointment(id, userDetails);
     }
 
     @DeleteMapping("/delete")

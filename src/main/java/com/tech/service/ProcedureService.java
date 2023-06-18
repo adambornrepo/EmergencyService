@@ -1,11 +1,13 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.abstracts.MedicalEmployee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Procedure;
 import com.tech.entites.enums.AppointmentStatus;
 import com.tech.entites.enums.ProcedureStatus;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.payload.request.ProcedureCreationRequest;
@@ -14,6 +16,7 @@ import com.tech.payload.request.update.ProcedureUpdateRequest;
 import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.ProcedureResponse;
 import com.tech.repository.ProcedureRepository;
+import com.tech.security.role.Role;
 import com.tech.utils.GeneralUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,40 +117,35 @@ public class ProcedureService {
     }
 
 
-    public ResponseEntity<ProcedureResponse> updateProcedure(ProcedureUpdateRequest request, Long procedureId) {
+    public ResponseEntity<ProcedureResponse> updateProcedure(ProcedureUpdateRequest request, Long procedureId, UserDetails userDetails) {
         Procedure foundProcedure = getOneProcedureById(procedureId);
-        if (foundProcedure.isDisabled()) {
-            throw new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.exists.id"), procedureId));
-        }
-        if (!foundProcedure.getAppointment().getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
-            throw new UnsuitableRequestException(
-                    String.format(apiMessages.getMessage("error.no.action.procedure.app"), foundProcedure.getAppointment().getStatus())
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+
+        if (!foundProcedure.getEmployee().getId().equals(employee.getId())) {
+            throw new ForbiddenAccessException(
+                    String.format(apiMessages.getMessage("error.no.action.procedure.employee"), employee.getId())
             );
         }
-        if (!foundProcedure.getEmployee().getId().equals(request.getEmployeeId())) {
-            throw new UnsuitableRequestException(
-                    String.format(apiMessages.getMessage("error.no.action.procedure.employee"), request.getEmployeeId())
-            );
-        }
+
+        checkProcedureIsAvailable(foundProcedure);
+
         foundProcedure.setApplied(request.getApplied());
         Procedure updated = procedureRepository.save(foundProcedure);
         return new ResponseEntity<>(buildProcedureResponse(updated), HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<ApiResponse> deleteProcedure(Long procedureId) {
+    public ResponseEntity<ApiResponse> deleteProcedure(Long procedureId, UserDetails userDetails) {
         Procedure foundProcedure = getOneProcedureById(procedureId);
-        if (foundProcedure.isDisabled()) {
-            throw new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.exists.id"), procedureId));
-        }
-        if (!foundProcedure.getAppointment().getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
-            throw new UnsuitableRequestException(
-                    String.format(apiMessages.getMessage("error.no.action.procedure.app"), foundProcedure.getAppointment().getStatus())
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+
+        if (!foundProcedure.getEmployee().getId().equals(employee.getId())) {
+            throw new ForbiddenAccessException(
+                    String.format(apiMessages.getMessage("error.no.action.procedure.employee"), employee.getId())
             );
         }
 
-        /**
-         * TODO Anlık login olan ile procedure ü gerçekleştiren aynı kişi mi
-         */
+        checkProcedureIsAvailable(foundProcedure);
+
         foundProcedure.setStatus(ProcedureStatus.DELETED);
         foundProcedure.setDisabled(true);
 
@@ -173,20 +172,27 @@ public class ProcedureService {
                 .build();
     }
 
-    public ResponseEntity<ProcedureResponse> completeProcedure(Long id) {
+    public ResponseEntity<ProcedureResponse> completeProcedure(Long procedureId, UserDetails userDetails) {
+        Procedure foundProcedure = getOneProcedureById(procedureId);
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
 
-        /**
-         * TODO Anlık login olan ile procedure ü gerçekleştiren aynı kişi mi
-         */
+        if (!foundProcedure.getEmployee().getId().equals(employee.getId())) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.procedure.complete"));
+        }
 
-        Procedure foundProcedure = getOneProcedureById(id);
+        checkProcedureIsAvailable(foundProcedure);
+
         foundProcedure.setStatus(ProcedureStatus.APPLIED);
         Procedure updated = procedureRepository.save(foundProcedure);
         return null;
     }
 
 
-    public ResponseEntity<List<ProcedureResponse>> getAllActiveProcedureByEmployeeId(Long id) {
+    public ResponseEntity<List<ProcedureResponse>> getAllActiveProcedureByEmployeeId(Long id, UserDetails userDetails) {
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (!employee.getId().equals(id) && !(employee.getRole().equals(Role.ADMIN) || employee.getRole().equals(Role.CHIEF))) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.procedure.info"));
+        }
         return ResponseEntity.ok(
                 procedureRepository.
                         findByEmployee_IdAndStatus(id, ProcedureStatus.NOT_APPLIED)
@@ -195,5 +201,18 @@ public class ProcedureService {
                         .collect(Collectors.toList())
         );
     }
+
+    private void checkProcedureIsAvailable(Procedure procedure) {
+
+        if (procedure.isDisabled()) {
+            throw new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.exists.id"), procedure.getId()));
+        }
+        if (!procedure.getAppointment().getStatus().equals(AppointmentStatus.IN_PROGRESS)) {
+            throw new UnsuitableRequestException(
+                    String.format(apiMessages.getMessage("error.no.action.procedure.app"), procedure.getAppointment().getStatus())
+            );
+        }
+    }
+
 
 }

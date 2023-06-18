@@ -1,11 +1,13 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Doctor;
 import com.tech.entites.concretes.Patient;
 import com.tech.entites.concretes.Representative;
 import com.tech.entites.enums.AppointmentStatus;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.mapper.AppointmentMapper;
@@ -15,6 +17,7 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedAppointmentResponse;
 import com.tech.payload.response.simple.SimpleAppointmentResponse;
 import com.tech.repository.AppointmentRepository;
+import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,12 +26,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -37,6 +43,7 @@ import java.util.Objects;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
+    private final CheckAndCoordinationService coordinationService;
     private final DoctorService doctorService;
     private final PatientService patientService;
     private final RepresentativeService representativeService;
@@ -76,14 +83,11 @@ public class AppointmentService {
             throw new UnsuitableRequestException(apiMessages.getMessage("error.no.action.appointment.change"));
         }
 
-
         if (request.getDoctorId() != null) {
             Doctor foundDoctor = doctorService.getOneDoctorById(request.getDoctorId());
             updateAppointment.setDoctor(foundDoctor);
         }
-        if (request.getStatus() != null) {
-            updateAppointment.setStatus(request.getStatus());
-        }
+
         if (StringUtils.hasText(request.getSymptoms())) {
             updateAppointment.setSymptoms(request.getSymptoms());
         }
@@ -92,7 +96,7 @@ public class AppointmentService {
     }
 
     public ResponseEntity<ApiResponse> cancelAppointment(Long id) {
-        Appointment cancel = getOneAppointmentById(id).toBuilder().build();
+        Appointment cancel = getOneAppointmentById(id);
         if (cancel.isDisabled()) {
             throw new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
         }
@@ -115,8 +119,16 @@ public class AppointmentService {
         );
     }
 
-    public ResponseEntity<ApiResponse> completeAppointment(Long id) {
-        Appointment complete = getOneAppointmentById(id).toBuilder().build();
+    public ResponseEntity<ApiResponse> completeAppointment(Long id, UserDetails userDetails) {
+        Appointment complete = getOneAppointmentById(id);
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+
+        if ((employee.getRole().equals(Role.DOCTOR) || employee.getRole().equals(Role.CHIEF)) &&
+                !employee.getId().equals(complete.getDoctor().getId())
+        ) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.doctor.complete"));
+        }
+
         if (complete.isDisabled()) {
             throw new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
         }
@@ -207,5 +219,32 @@ public class AppointmentService {
         return appointmentRepository
                 .findByAppointmentDate(date, pageable)
                 .map(appointmentMapper::buildSimpleAppointmentResponse);
+    }
+
+    public List<SimpleAppointmentResponse> getAllInProgressAppointmentListByDoctorId(Long doctorId) {
+        return appointmentRepository
+                .findByDoctor_IdAndStatusOrderByCreatedAtAsc(doctorId, AppointmentStatus.IN_PROGRESS)
+                .stream()
+                .map(appointmentMapper::buildSimpleAppointmentResponse)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<SimpleAppointmentResponse> getAllAppointmentListByPatientSsn(String ssn) {
+        return appointmentRepository
+                .findByPatient_SsnOrderByCreatedAtDesc(ssn)
+                .stream()
+                .map(appointmentMapper::buildSimpleAppointmentResponse)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<SimpleAppointmentResponse> getAllAppointmentListByDate(LocalDate date) {
+        return appointmentRepository
+                .findByAppointmentDateOrderByDoctor_FirstNameAscCreatedAtAsc(date)
+                .stream()
+                .map(appointmentMapper::buildSimpleAppointmentResponse)
+                .collect(Collectors.toList());
+
     }
 }

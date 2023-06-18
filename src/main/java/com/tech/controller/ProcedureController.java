@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,8 +44,10 @@ public class ProcedureController {
 
     @GetMapping("/getAll/active/employee")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read','lab_tech:read','radiology_tech:read')")
-    public ResponseEntity<List<ProcedureResponse>> getAllProcedureActiveByEmployeeId(@RequestParam("id") Long id) {
-        return procedureService.getAllActiveProcedureByEmployeeId(id);
+    public ResponseEntity<List<ProcedureResponse>> getAllProcedureActiveByEmployeeId(
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return procedureService.getAllActiveProcedureByEmployeeId(id, userDetails);
     }
 
 
@@ -61,20 +65,25 @@ public class ProcedureController {
 
     @PatchMapping("/update")
     @PreAuthorize("hasAnyAuthority('chief:update','doctor:update','nurse:update','lab_tech:update','radiology_tech:update')")
-    public ResponseEntity<ProcedureResponse> updateProcedure(@Valid @RequestBody ProcedureUpdateRequest request, @RequestParam("id") Long id) {
-        return procedureService.updateProcedure(request, id);
+    public ResponseEntity<ProcedureResponse> updateProcedure(
+            @Valid @RequestBody ProcedureUpdateRequest request,
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return procedureService.updateProcedure(request, id, userDetails);
     }
 
     @PatchMapping("/complete")
     @PreAuthorize("hasAnyAuthority('nurse:update','lab_tech:update','radiology_tech:update')")
-    public ResponseEntity<ProcedureResponse> updateProcedure(@RequestParam("id") Long id) {
-        return procedureService.completeProcedure(id);
+    public ResponseEntity<ProcedureResponse> completeProcedure(
+            @RequestParam("id") Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return procedureService.completeProcedure(id, userDetails);
     }
 
     @DeleteMapping("/delete")
     @PreAuthorize("hasAnyAuthority(,'chief:delete','doctor:delete','nurse:delete','lab_tech:delete','radiology_tech:delete')")
-    public ResponseEntity<ApiResponse> deleteProcedure(@RequestParam("id") Long id) {
-        return procedureService.deleteProcedure(id);
+    public ResponseEntity<ApiResponse> deleteProcedure(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return procedureService.deleteProcedure(id, userDetails);
     }
 
 }

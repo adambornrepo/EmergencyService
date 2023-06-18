@@ -21,10 +21,6 @@ public class PrescriptionCreationRequest implements Serializable {
     @NotNull(message = "{validation.null.appointment.id}")
     private Long appointmentId;
 
-    @Positive(message = "{validation.id.negative}")
-    @NotNull(message = "{validation.null.doctor.id}")
-    private Long doctorId;
-
     @NotNull(message = "{validation.null.medicine}")
     @Size(min = 1, message = "{validation.size.medicine}")
     private List<String> medicines;

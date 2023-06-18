@@ -1,8 +1,10 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Representative;
 import com.tech.entites.enums.UniqueField;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.mapper.RepresentativeMapper;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,7 +100,13 @@ public class RepresentativeService {
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(saved), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<DetailedRepresentativeResponse> updateRepresentative(RepresentativeUpdateRequest request, Long id) {
+    public ResponseEntity<DetailedRepresentativeResponse> updateRepresentative(RepresentativeUpdateRequest request, Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.PSR) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.psr.update"));
+        }
+
         Representative found = getOneRepresentativeById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -111,7 +120,13 @@ public class RepresentativeService {
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(updated), HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<ApiResponse> deleteRepresentative(Long id) {
+    public ResponseEntity<ApiResponse> deleteRepresentative(Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.PSR) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.psr.delete"));
+        }
+
         Representative found = getOneRepresentativeById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));

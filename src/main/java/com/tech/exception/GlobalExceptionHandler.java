@@ -1,10 +1,7 @@
 package com.tech.exception;
 
 import com.tech.configuration.ApiMessages;
-import com.tech.exception.custom.ConflictException;
-import com.tech.exception.custom.ResourceNotFoundException;
-import com.tech.exception.custom.SchedulerException;
-import com.tech.exception.custom.UnsuitableRequestException;
+import com.tech.exception.custom.*;
 import com.tech.payload.response.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -54,7 +51,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        apiResponse.setMessage("{}");
+        apiResponse.setMessage("{}");//TODO buraya mesaj eklenecek propa
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
@@ -65,11 +62,19 @@ public class GlobalExceptionHandler {
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(SchedulerException.class)
     public ResponseEntity<?> handleSchedulerException(SchedulerException ex) {
         apiResponse.setMessage(ex.getMessage());
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<?> handleForbiddenAccessException(ForbiddenAccessException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

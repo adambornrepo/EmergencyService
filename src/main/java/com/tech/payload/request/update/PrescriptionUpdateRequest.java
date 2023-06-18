@@ -17,10 +17,6 @@ import java.util.List;
 @Builder
 public class PrescriptionUpdateRequest implements Serializable {
 
-    @Positive(message = "{validation.id.negative}")
-    @NotNull(message = "{validation.null.doctor.id}")
-    private Long doctorId;
-
     @NotNull(message = "{validation.null.medicine}")
     @Size(min = 1, message = "{validation.size.medicine}")
     private List<String> medicines;

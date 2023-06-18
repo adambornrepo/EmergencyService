@@ -1,8 +1,10 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.LabTechnician;
 import com.tech.entites.enums.UniqueField;
+import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.mapper.LabTechnicianMapper;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +102,13 @@ public class LabTechnicianService {
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(saved), HttpStatus.CREATED);
     }
 
-    public ResponseEntity<DetailedLabTechResponse> updateLabTech(LabTechUpdateRequest request, Long id) {
+    public ResponseEntity<DetailedLabTechResponse> updateLabTech(LabTechUpdateRequest request, Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.LAB_TECHNICIAN) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.lab-tech.update"));
+        }
+
         LabTechnician found = getOneLabTechById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -113,7 +122,13 @@ public class LabTechnicianService {
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(updated), HttpStatus.ACCEPTED);
     }
 
-    public ResponseEntity<ApiResponse> deleteLabTech(Long id) {
+    public ResponseEntity<ApiResponse> deleteLabTech(Long id, UserDetails userDetails) {
+
+        Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
+        if (employee.getRole().equals(Role.LAB_TECHNICIAN) && !employee.getId().equals(id)) {
+            throw new ForbiddenAccessException(apiMessages.getMessage("error.forbidden.lab-tech.delete"));
+        }
+
         LabTechnician found = getOneLabTechById(id);
         if (found.isDisabled()) {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.id"), id));
@@ -128,7 +143,6 @@ public class LabTechnicianService {
                 HttpStatus.OK
         );
     }
-
 
     public List<SimpleLabTechResponse> getAllActiveLabTech() {
         return labTechnicianRepository.findByIsDisabled(false)
