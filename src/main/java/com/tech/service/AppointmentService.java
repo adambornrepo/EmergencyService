@@ -234,13 +234,13 @@ public class AppointmentService {
     public ResponseEntity<ApiResponse> getAllInProgressAppointmentByDoctorIdForExport(Long doctorId) {
         var exportData = getAllInProgressAppointmentListByDoctorId(doctorId);
         Doctor doctor = doctorService.getOneDoctorById(doctorId);
-        String doctorFullName = String
-                .join("_", doctor.getFirstName(), doctor.getLastName())
+        String fileName = String
+                .join("_", doctor.getFirstName(), doctor.getLastName(),"appointments")
                 .replace(" ", "_").toLowerCase();
 
         excelWriteService.writeAppointmentsToExcel(
                 exportData,
-                doctorFullName,
+                fileName,
                 "DR ID = " + doctor.getId()
         );
         return ResponseEntity.ok(

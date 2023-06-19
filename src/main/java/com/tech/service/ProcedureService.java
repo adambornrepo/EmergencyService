@@ -7,6 +7,7 @@ import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Procedure;
 import com.tech.entites.enums.AppointmentStatus;
 import com.tech.entites.enums.ProcedureStatus;
+import com.tech.exception.custom.DataExportException;
 import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
@@ -29,6 +30,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,6 +43,7 @@ public class ProcedureService {
     private final ProcedureRepository procedureRepository;
     private final AppointmentService appointmentService;
     private final CheckAndCoordinationService coordinationService;
+    private final ExcelWriteService excelWriteService;
     private final ApiMessages apiMessages;
 
     public ResponseEntity<List<ProcedureResponse>> getAllProcedureByAppointmentId(Long appointmentId) {
@@ -161,6 +164,7 @@ public class ProcedureService {
     private ProcedureResponse buildProcedureResponse(Procedure procedure) {
         return ProcedureResponse.builder()
                 .id(procedure.getId())
+                .doctorNote(procedure.getDoctorNote())
                 .applied(procedure.getApplied())
                 .appointmentId(procedure.getAppointment().getId())
                 .employeeId(procedure.getEmployee().getId())
@@ -214,5 +218,37 @@ public class ProcedureService {
         }
     }
 
+
+    public ResponseEntity<ApiResponse> getAllProcedureOnDateByEmployeeIdForExport(Long employeeId, LocalDate appointmentDate) {
+        MedicalEmployee employee = coordinationService.getOneMedicalEmployeeById(employeeId);
+        var exportData = procedureRepository
+                .findByEmployee_IdAndAppointment_AppointmentDateOrderByCreatedAtDesc(employeeId, appointmentDate)
+                .stream()
+                .map(this::buildProcedureResponse)
+                .collect(Collectors.toList());
+        if (exportData.isEmpty()) {
+            throw new DataExportException(apiMessages.getMessage("error.export.data.empty"));
+        }
+
+        String fileName = String
+                .join("_",
+                        employee.getFirstName(),
+                        employee.getLastName(), "procedures",
+                        appointmentDate.toString()
+                )
+                .replace(" ", "_").toLowerCase();
+        excelWriteService.writeAppointmentsToExcel(
+                exportData,
+                fileName,
+                "PERSONAL ID = " + employee.getId()
+        );
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.export.completed"))
+                        .build()
+        );
+
+    }
 
 }

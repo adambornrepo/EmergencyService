@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -40,6 +41,14 @@ public class ProcedureController {
             @RequestParam(value = "type", defaultValue = "DESC") String type
     ) {
         return procedureService.getAllProcedureByEmployeeId(id, page, size, sort, type);
+    }
+
+    @GetMapping("/getAll/export/employee")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
+    public ResponseEntity<ApiResponse> getAllProcedureByEmployeeIdForExport(
+            @RequestParam("id") Long id, @RequestParam("on") LocalDate date
+    ) {
+        return procedureService.getAllProcedureOnDateByEmployeeIdForExport(id, date);
     }
 
     @GetMapping("/getAll/active/employee")

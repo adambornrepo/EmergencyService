@@ -9,10 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface ProcedureRepository extends JpaRepository<Procedure, Long> {
+    List<Procedure> findByEmployee_IdAndAppointment_AppointmentDateOrderByCreatedAtDesc(Long id, LocalDate appointmentDate);
     List<Procedure> findByStatusAndCreatedAtLessThanAndAppliedNotNull(ProcedureStatus status, long createdAt);
     List<Procedure> findByStatusAndCreatedAtLessThanAndAppliedNull(ProcedureStatus status, long createdAt);
     List<Procedure> findByEmployee_IdAndStatus(Long id, ProcedureStatus status);
