@@ -81,6 +81,7 @@ public class CheckAndCoordinationService {
 
     }
 
+
     public MedicalEmployee getOneMedicalEmployeeById(Long id) {
         var doctor = doctorRepository.findById(id).orElse(null);
         if (doctor != null) return doctor;
@@ -163,5 +164,13 @@ public class CheckAndCoordinationService {
 
     }
 
+
+    public List<Employee> getAllActiveEmployeeList() {
+        List<Employee> employees = new ArrayList<>();
+        for (BaseEmployeeRepository<?, ?> repository : employeeRepositories) {
+            employees.addAll(repository.findByIsDisabledOrderByIdAsc(false));
+        }
+        return employees;
+    }
 
 }

@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 public @interface ExportToExcel {
 
     int index() default -1;
-    String text() default "";
+    String headerText() default "";
     int width() default 4000;
 
 }

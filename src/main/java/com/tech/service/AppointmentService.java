@@ -49,6 +49,7 @@ public class AppointmentService {
     private final RepresentativeService representativeService;
     private final AppointmentMapper appointmentMapper;
     private final ApiMessages apiMessages;
+    private final ExcelWriteService excelWriteService;
 
 
     public ResponseEntity<SimpleAppointmentResponse> saveAppointment(AppointmentCreationRequest request) {
@@ -230,6 +231,64 @@ public class AppointmentService {
 
     }
 
+    public ResponseEntity<ApiResponse> getAllInProgressAppointmentByDoctorIdForExport(Long doctorId) {
+        var exportData = getAllInProgressAppointmentListByDoctorId(doctorId);
+        Doctor doctor = doctorService.getOneDoctorById(doctorId);
+        String doctorFullName = String
+                .join("_", doctor.getFirstName(), doctor.getLastName())
+                .replace(" ", "_").toLowerCase();
+
+        excelWriteService.writeAppointmentsToExcel(
+                exportData,
+                doctorFullName,
+                "DR ID = " + doctor.getId()
+        );
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.export.completed"))
+                        .build()
+        );
+    }
+
+
+    public ResponseEntity<ApiResponse> getAllAppointmentByPatientSsnForExport(String ssn) {
+        var exportData = getAllAppointmentListByPatientSsn(ssn);
+        Patient patient = patientService.getOnePatientBySsn(ssn);
+        String patientFullName = String
+                .join("_", patient.getFirstName(), patient.getLastName())
+                .replace(" ", "_").toLowerCase();
+
+        excelWriteService.writeAppointmentsToExcel(
+                exportData,
+                patientFullName,
+                "PATIENT SSN = " + patient.getSsn()
+        );
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.export.completed"))
+                        .build()
+        );
+    }
+
+    public ResponseEntity<ApiResponse> getAllAppointmentByDateForExport(LocalDate date) {
+        var exportData = getAllAppointmentListByDate(date);
+        String sheetName = String.join(" = ", "APPTS", date.toString());
+        excelWriteService.writeAppointmentsToExcel(
+                exportData,
+                date.toString(),
+                sheetName
+        );
+
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.export.completed"))
+                        .build()
+        );
+    }
+
     public List<SimpleAppointmentResponse> getAllAppointmentListByPatientSsn(String ssn) {
         return appointmentRepository
                 .findByPatient_SsnOrderByCreatedAtDesc(ssn)
@@ -247,4 +306,5 @@ public class AppointmentService {
                 .collect(Collectors.toList());
 
     }
+
 }
