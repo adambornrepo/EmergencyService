@@ -16,8 +16,6 @@ import java.util.function.Consumer;
 @SuperBuilder
 public class NurseUpdateRequest extends EmployeeUpdateRequest implements Serializable, Consumer<Nurse> {
 
-    private Zone zone;
-
     @Override
     public void accept(Nurse nurse) {
         if (StringUtils.hasText(getFirstName())) nurse.setFirstName(getFirstName());
@@ -25,7 +23,6 @@ public class NurseUpdateRequest extends EmployeeUpdateRequest implements Seriali
         if (StringUtils.hasText(getPhoneNumber())) nurse.setPhoneNumber(getPhoneNumber());
         if (StringUtils.hasText(getPassword())) nurse.setPassword(getPassword());
         if (getAddress() != null) nurse.setAddress(getAddress());
-        if (getZone() != null) nurse.setZone(getZone());
     }
 
 }

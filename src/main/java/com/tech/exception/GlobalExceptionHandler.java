@@ -18,8 +18,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -51,7 +54,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<?> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        apiResponse.setMessage("{}");//TODO buraya mesaj eklenecek propa
+        if (Objects.requireNonNull(ex.getRequiredType()).isEnum()) {
+            var enumClass = (Class<? extends Enum<?>>) ex.getRequiredType();
+            String validEnumValues = Arrays.stream(enumClass.getEnumConstants())
+                    .map(Enum::name)
+                    .collect(Collectors.joining(", "));
+            apiResponse.setMessage(String.format(apiMessages.getMessage("error.type.mismatch"), ex.getValue(), validEnumValues));
+        } else {
+            apiResponse.setMessage(String.format(apiMessages.getMessage("error.type.mismatch"), ex.getValue(), ex.getRequiredType().isEnum()));
+        }
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
@@ -63,8 +74,29 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MissingArgumentException.class)
+    public ResponseEntity<?> handleMissingArgumentException(MissingArgumentException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(SchedulerException.class)
     public ResponseEntity<?> handleSchedulerException(SchedulerException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DataExportException.class)
+    public ResponseEntity<?> handleDataExportException(DataExportException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DirectoryCreationException.class)
+    public ResponseEntity<?> handleDirectoryCreationException(DirectoryCreationException ex) {
         apiResponse.setMessage(ex.getMessage());
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
