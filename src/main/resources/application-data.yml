@@ -1,0 +1,23 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    showSql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/emergency
+    driverClassName: org.postgresql.Driver
+    username: username
+    password: password
+
+export:
+  folder:
+    path:
+      xls: ${user.home}/Desktop/.emergencyService/export/excel
+      pdf: ${user.home}/Desktop/.emergencyService/export/pdf
+  file:
+    path:
+      background-img: src/main/resources/px_bg.png

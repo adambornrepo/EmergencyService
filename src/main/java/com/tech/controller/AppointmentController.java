@@ -132,18 +132,18 @@ public class AppointmentController {
         return appointmentService.deleteAppointment(id);
     }
 
-    @GetMapping("/getAll/export/inProgress/doctor")
+    @PostMapping("/all/export/inProgress/doctor")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
     public ResponseEntity<ApiResponse> getAllInProgressAppointmentByDoctorIdForExport(@RequestParam("id") Long doctorId) {
         return appointmentService.getAllInProgressAppointmentByDoctorIdForExport(doctorId);
     }
 
-    @GetMapping("/getAll/export/patient")
+    @PostMapping("/all/export/patient")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','psr:read')")
     public ResponseEntity<ApiResponse> getAllAppointmentByPatientSsnForExport(@RequestParam("ssn") String ssn) {
         return appointmentService.getAllAppointmentByPatientSsnForExport(ssn);
     }
-    @GetMapping("/getAll/export/date")
+    @PostMapping("/all/export/date")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','psr:read')")
     public ResponseEntity<ApiResponse> getAllAppointmentByDateForExport(@RequestParam("on") LocalDate date) {
         return appointmentService.getAllAppointmentByDateForExport(date);

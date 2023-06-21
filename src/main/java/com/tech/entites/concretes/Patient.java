@@ -30,6 +30,9 @@ public class Patient extends Person implements Serializable {
     )
     private Long id;
 
+    @Column(unique = true, length = 100)
+    private String email;
+
     @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
     private List<Appointment> appointment;
 

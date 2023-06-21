@@ -1,0 +1,21 @@
+# Gmail SMTP
+spring:
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    port: 587
+    username: noreply.emergency.sevice@gmail.com
+    password: tmwyvgqsejhuihow
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+email:
+  px:
+    subject: Prescription Email
+    template: email-template.ftl
+    background-img: px_bg.png

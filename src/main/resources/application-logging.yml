@@ -1,0 +1,11 @@
+logging:
+  file:
+    name: log/emergency_service.log
+  pattern:
+    file: "%d %-5level [%thread] %logger:%msg%n"
+  level:
+    org:
+      springframework:
+        web: WARN
+      hibernate: INFO
+    com.tpe: INFO

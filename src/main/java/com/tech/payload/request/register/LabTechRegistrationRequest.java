@@ -5,6 +5,7 @@ import com.tech.entites.concretes.Address;
 import com.tech.entites.concretes.LabTechnician;
 import com.tech.entites.enums.Gender;
 import com.tech.payload.request.register.abstracts.BaseRegistrationRequest;
+import com.tech.utils.GeneralUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 @Getter
@@ -25,8 +27,8 @@ public class LabTechRegistrationRequest extends BaseRegistrationRequest implemen
     @Override
     public LabTechnician get() {
         return LabTechnician.builder()
-                .firstName(getFirstName())
-                .lastName(getLastName())
+                .firstName(GeneralUtils.capitalize(getFirstName()))
+                .lastName(getLastName().toLowerCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

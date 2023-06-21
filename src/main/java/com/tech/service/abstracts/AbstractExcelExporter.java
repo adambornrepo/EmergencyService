@@ -18,13 +18,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-@Slf4j
 public abstract class AbstractExcelExporter {
     protected abstract String prepareDirectoriesAndExcelFilePath(String fileName);
 
     protected abstract CellStyle buildHeaderStyle(Workbook workbook);
 
     protected abstract CellStyle buildDataCellStyle(Workbook workbook);
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractExcelExporter.class);
 
     public <T> void writeAppointmentsToExcel(List<T> exportDataList, String fileName, String sheetName) {
 

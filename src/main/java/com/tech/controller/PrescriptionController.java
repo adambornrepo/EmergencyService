@@ -55,6 +55,17 @@ public class PrescriptionController {
         return prescriptionService.getPrescriptionByAppointmentId(id);
     }
 
+    @PostMapping("/save/pdf")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read')")
+    public ResponseEntity<ApiResponse> exportOnePrescriptionToPdf(@RequestParam("id") Long prescriptionId) {
+        return prescriptionService.exportPrescriptionToPdfById(prescriptionId);
+    }
+    @PostMapping("/send/mail")
+    @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read')")
+    public ResponseEntity<ApiResponse> sendPrescriptionToEmailById(@RequestParam("id") Long prescriptionId) {
+        return prescriptionService.sendPrescriptionToPatientEmailById(prescriptionId);
+    }
+
     @GetMapping("/getAll/patient")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read')")
     public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientId(
@@ -63,6 +74,7 @@ public class PrescriptionController {
     ) {
         return prescriptionService.getAllPrescriptionByPatientId(id, pageable);
     }
+
 
     @GetMapping("/getAll/patient/ssn")
     @PreAuthorize("hasAnyAuthority('admin:read','chief:read','doctor:read','nurse:read')")
@@ -75,7 +87,7 @@ public class PrescriptionController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyAuthority('chief:create','doctor:create')")
-    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(
+    public ResponseEntity<?> savePrescription(
             @Valid @RequestBody PrescriptionCreationRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
         return prescriptionService.savePrescription(request, userDetails);

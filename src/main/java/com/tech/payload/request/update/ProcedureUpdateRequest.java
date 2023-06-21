@@ -20,11 +20,4 @@ public class ProcedureUpdateRequest implements Serializable {
     @Size(min = 2,max = 150,message = "{validation.size.field}")
     private String applied;
 
-    /**
-     * @Note: This part is no longer used
-     *
-     * @Positive(message = "{validation.id.negative}")
-     * @NotNull(message = "{validation.null.employee.id}")
-     * private Long employeeId;
-     */
 }

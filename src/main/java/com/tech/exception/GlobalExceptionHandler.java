@@ -80,6 +80,12 @@ public class GlobalExceptionHandler {
         apiResponse.setSuccess(false);
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    @ExceptionHandler(EmailSendingException.class)
+    public ResponseEntity<?> handleEmailSendingException(EmailSendingException ex) {
+        apiResponse.setMessage(ex.getMessage());
+        apiResponse.setSuccess(false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(SchedulerException.class)
     public ResponseEntity<?> handleSchedulerException(SchedulerException ex) {

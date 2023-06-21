@@ -43,6 +43,8 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .ssn(employee.getSsn())
                 .id(employee.getId())
+                .firstName(employee.getFirstName())
+                .lastName(employee.getLastName())
                 .build();
     }
 

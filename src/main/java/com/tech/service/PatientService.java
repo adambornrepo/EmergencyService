@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -34,7 +35,6 @@ import java.util.Objects;
 public class PatientService {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
-    private final CheckAndCoordinationService coordinationService;
     private final ApiMessages apiMessages;
 
     public ResponseEntity<DetailedPatientResponse> getOnePatientByUniqueField(UniqueField searchIn, String value) {
@@ -83,7 +83,7 @@ public class PatientService {
     }
 
     public ResponseEntity<DetailedPatientResponse> savePatient(PatientRegistrationRequest request) {
-        checkDuplicateForPatient(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
+        checkDuplicateForPatient(request.getSsn(), request.getPhoneNumber(), request.getEmail()); // ssn - phoneNum - email
         Patient patient = request.get();
         patient.setRole(Role.PATIENT);
         Patient saved = patientRepository.save(patient);
@@ -96,7 +96,7 @@ public class PatientService {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.ssn"), ssn));
         }
         if (!found.getPhoneNumber().equals(request.getPhoneNumber())) {
-            checkDuplicateForPatient(null, request.getPhoneNumber());
+            checkDuplicateForPatient(null, request.getPhoneNumber(), request.getEmail());
         }
         request.accept(found);
         Patient updated = patientRepository.save(found);
@@ -111,6 +111,7 @@ public class PatientService {
         String mark = System.currentTimeMillis() + "¨!¨";
         found.setSsn(mark + found.getSsn());
         found.setPhoneNumber(mark + found.getPhoneNumber());
+        found.setEmail(mark + found.getEmail());
         Patient deleted = patientRepository.save(found);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.patient.delete")).build(),
@@ -118,12 +119,15 @@ public class PatientService {
         );
     }
 
-    private void checkDuplicateForPatient(String ssn, String phoneNumber) {
-        if (patientRepository.existsBySsn(ssn)) {
+    private void checkDuplicateForPatient(String ssn, String phoneNumber, String email) {
+        if (StringUtils.hasText(ssn) && patientRepository.existsBySsn(ssn)) {
             throw new ConflictException(String.format(apiMessages.getMessage("error.conflict.ssn"), ssn));
         }
-        if (patientRepository.existsByPhoneNumber(phoneNumber)) {
+        if (StringUtils.hasText(phoneNumber) && patientRepository.existsByPhoneNumber(phoneNumber)) {
             throw new ConflictException(String.format(apiMessages.getMessage("error.conflict.phone"), phoneNumber));
+        }
+        if (StringUtils.hasText(email) && patientRepository.existsByEmail(email)) {
+            throw new ConflictException(String.format(apiMessages.getMessage("error.conflict.email"), email));
         }
     }
 

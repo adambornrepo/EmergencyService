@@ -7,16 +7,15 @@ import com.tech.entites.enums.Gender;
 import com.tech.payload.annotations.custom.PhoneNumber;
 import com.tech.payload.annotations.custom.SSN;
 import com.tech.payload.request.register.abstracts.BaseRegistrationRequest;
+import com.tech.utils.GeneralUtils;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 @Getter
@@ -53,18 +52,22 @@ public class PatientRegistrationRequest implements Serializable, Supplier<Patien
     @NotNull(message = "{validation.null.phone}")
     private String phoneNumber;
 
+    @Email(message = "{validation.email}")
+    private String email;
+
     @Valid
     private Address address;
 
     @Override
     public Patient get() {
         return Patient.builder()
-                .firstName(getFirstName())
-                .lastName(getLastName())
+                .firstName(GeneralUtils.capitalize(getFirstName()))
+                .lastName(getLastName().toLowerCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())
                 .phoneNumber(getPhoneNumber())
+                .email(getEmail().toLowerCase(Locale.US))
                 .address(getAddress())
                 .build();
     }

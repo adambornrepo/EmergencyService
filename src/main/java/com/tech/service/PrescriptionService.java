@@ -1,11 +1,13 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
+import com.tech.demo.PrescriptionExportResource;
 import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Doctor;
 import com.tech.entites.concretes.Prescription;
 import com.tech.entites.enums.AppointmentStatus;
+import com.tech.exception.custom.EmailSendingException;
 import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
@@ -20,16 +22,12 @@ import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -42,9 +40,11 @@ public class PrescriptionService {
     private final AppointmentService appointmentService;
     private final PrescriptionMapper prescriptionMapper;
     private final CheckAndCoordinationService coordinationService;
+    private final PrescriptionPdfService prescriptionPdfService;
+    private final EmailService emailService;
     private final ApiMessages apiMessages;
 
-    public ResponseEntity<DetailedPrescriptionResponse> savePrescription(PrescriptionCreationRequest request, UserDetails userDetails) {
+    public ResponseEntity<?> savePrescription(PrescriptionCreationRequest request, UserDetails userDetails) {
         Appointment appointmentFound = appointmentService.getOneAppointmentById(request.getAppointmentId());
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
 
@@ -68,6 +68,25 @@ public class PrescriptionService {
                 .appointment(appointmentFound)
                 .build();
         Prescription saved = prescriptionRepository.save(savePrescription);
+
+        if (appointmentFound.getPatient().getEmail() != null) {
+            try {
+                sendPrescriptionToPatientEmailById(saved);
+            } catch (EmailSendingException e) {
+                return new ResponseEntity<>(
+                        ApiResponse.builder()
+                                .success(false)
+                                .message(
+                                        String.format(
+                                                apiMessages.getMessage("error.send.mail.px.save"),
+                                                saved.getId(),
+                                                e.getMessage()
+                                        )
+                                )
+                                .build(), HttpStatus.INTERNAL_SERVER_ERROR
+                );
+            }
+        }
 
         return new ResponseEntity<>(prescriptionMapper.buildDetailedPrescriptionResponse(saved), HttpStatus.CREATED);
     }
@@ -131,6 +150,44 @@ public class PrescriptionService {
         );
     }
 
+    public ResponseEntity<ApiResponse> exportPrescriptionToPdfById(Long prescriptionId) {
+        Prescription prescription = getOnePrescriptionById(prescriptionId);
+        PrescriptionExportResource exportData = prescriptionMapper.buildPrescriptionExportResource(prescription);
+        prescriptionPdfService.createPdf(exportData);
+
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.prescription.export.pdf"))
+                        .build()
+        );
+    }
+
+    public ResponseEntity<ApiResponse> sendPrescriptionToPatientEmailById(Long prescriptionId) {
+        Prescription prescription = getOnePrescriptionById(prescriptionId);
+        PrescriptionExportResource exportData = prescriptionMapper.buildPrescriptionExportResource(prescription);
+
+        if (exportData.getPatientEmail() == null) {
+            return new ResponseEntity<>(
+                    ApiResponse.builder()
+                            .success(false)
+                            .message(apiMessages.getMessage("error.not.exists.email"))
+                            .build(), HttpStatus.NOT_FOUND
+            );
+        }
+        emailService.sendPrescriptionEmail(exportData, exportData.getPatientEmail());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(apiMessages.getMessage("success.prescription.mail.send"))
+                        .build()
+        );
+    }
+
+    private void sendPrescriptionToPatientEmailById(Prescription prescription) {
+        PrescriptionExportResource exportData = prescriptionMapper.buildPrescriptionExportResource(prescription);
+        emailService.sendPrescriptionEmail(exportData, exportData.getPatientEmail());
+    }
 
     public ResponseEntity<DetailedPrescriptionResponse> getOneDetailedPrescriptionById(Long id) {
         return ResponseEntity.ok(prescriptionMapper.buildDetailedPrescriptionResponse(getOnePrescriptionById(id)));
@@ -167,4 +224,5 @@ public class PrescriptionService {
     public Page<SimplePrescriptionResponse> getAllPrescriptionByPatientSsn(String ssn, Pageable pageable) {
         return prescriptionRepository.findByAppointment_Patient_Ssn(ssn, pageable).map(prescriptionMapper::buildSimplePrescriptionResponse);
     }
+
 }

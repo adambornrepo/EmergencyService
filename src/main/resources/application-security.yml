@@ -1,0 +1,5 @@
+security:
+  token:
+    prefix: Bearer
+    secret: YoucannotpassThedarkfirewillnotavailyouGobacktotheShadowYoushallnotpass
+    validity: 86400000

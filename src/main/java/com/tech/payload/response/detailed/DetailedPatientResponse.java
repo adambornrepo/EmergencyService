@@ -45,4 +45,6 @@ public class DetailedPatientResponse implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
+    private String email;
+
 }

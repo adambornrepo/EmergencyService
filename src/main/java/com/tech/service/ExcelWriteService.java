@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -16,11 +17,14 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class ExcelWriteService extends AbstractExcelExporter {
 
+    @Value("${export.folder.path.xls}")
+    private String excelFolderPath;
+
     @Override
     protected String prepareDirectoriesAndExcelFilePath(String fileName) {
-        Path tempPath = Paths.get(System.getProperty("user.home"), "desktop", ".emergencyService", "export", "temp");
-        createDirectories(tempPath.toString());
-        String excelFilePath = tempPath.resolve(fileName + ".xlsx").toString();
+        Path excelPath = Paths.get(excelFolderPath);
+        createDirectories(excelPath.toString());
+        String excelFilePath = excelPath.resolve(fileName + ".xlsx").toString();
         return excelFilePath;
     }
 
