@@ -5,7 +5,6 @@ import com.tech.exception.custom.DataExportException;
 import com.tech.exception.custom.DirectoryCreationException;
 import com.tech.exception.custom.MissingArgumentException;
 import com.tech.payload.annotations.custom.ExportToExcel;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -27,7 +26,7 @@ public abstract class AbstractExcelExporter {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractExcelExporter.class);
 
-    public <T> void writeAppointmentsToExcel(List<T> exportDataList, String fileName, String sheetName) {
+    public <T> void writeToExcel(List<T> exportDataList, String fileName, String sheetName) {
 
         checkMethodParameters(exportDataList, fileName, sheetName);
 

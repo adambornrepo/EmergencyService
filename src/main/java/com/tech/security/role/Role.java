@@ -23,31 +23,37 @@ public enum Role {
             )
     ),
     ADMIN(
+            /*
+             * In this section, the admin is not directly granted the authority to
+             * CREATE, UPDATE, or DELETE in order to ensure the security of medical operations.
+             * The admin cannot perform these actions unless clearly authorized.
+             */
+
             Set.of(
                     ADMIN_READ,
                     ADMIN_UPDATE,
                     ADMIN_DELETE,
                     ADMIN_CREATE,
                     CHIEF_READ,
-                    CHIEF_UPDATE,
-                    CHIEF_DELETE,
-                    CHIEF_CREATE,
+//                    CHIEF_UPDATE,
+//                    CHIEF_DELETE,
+//                    CHIEF_CREATE,
                     DOCTOR_READ,
-                    DOCTOR_UPDATE,
-                    DOCTOR_DELETE,
-                    DOCTOR_CREATE,
+//                    DOCTOR_UPDATE,
+//                    DOCTOR_DELETE,
+//                    DOCTOR_CREATE,
                     NURSE_READ,
-                    NURSE_UPDATE,
-                    NURSE_DELETE,
-                    NURSE_CREATE,
+//                    NURSE_UPDATE,
+//                    NURSE_DELETE,
+//                    NURSE_CREATE,
                     LAB_TECHNICIAN_READ,
-                    LAB_TECHNICIAN_UPDATE,
-                    LAB_TECHNICIAN_DELETE,
-                    LAB_TECHNICIAN_CREATE,
+//                    LAB_TECHNICIAN_UPDATE,
+//                    LAB_TECHNICIAN_DELETE,
+//                    LAB_TECHNICIAN_CREATE,
                     RADIOLOGY_TECHNICIAN_READ,
-                    RADIOLOGY_TECHNICIAN_UPDATE,
-                    RADIOLOGY_TECHNICIAN_DELETE,
-                    RADIOLOGY_TECHNICIAN_CREATE,
+//                    RADIOLOGY_TECHNICIAN_UPDATE,
+//                    RADIOLOGY_TECHNICIAN_DELETE,
+//                    RADIOLOGY_TECHNICIAN_CREATE,
                     PSR_READ,
                     PSR_UPDATE,
                     PSR_DELETE,

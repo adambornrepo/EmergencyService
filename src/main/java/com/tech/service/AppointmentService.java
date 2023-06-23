@@ -13,6 +13,7 @@ import com.tech.exception.custom.UnsuitableRequestException;
 import com.tech.mapper.AppointmentMapper;
 import com.tech.payload.request.AppointmentCreationRequest;
 import com.tech.payload.request.update.AppointmentUpdateRequest;
+import com.tech.payload.resource.AppointmentExcelResource;
 import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.detailed.DetailedAppointmentResponse;
 import com.tech.payload.response.simple.SimpleAppointmentResponse;
@@ -21,9 +22,7 @@ import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +32,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -228,17 +226,24 @@ public class AppointmentService {
                 .stream()
                 .map(appointmentMapper::buildSimpleAppointmentResponse)
                 .collect(Collectors.toList());
+    }
 
+    private List<AppointmentExcelResource> getAllInProgressAppointmentListByDoctorIdForExport(Long doctorId) {
+        return appointmentRepository
+                .findByDoctor_IdAndStatusOrderByCreatedAtAsc(doctorId, AppointmentStatus.IN_PROGRESS)
+                .stream()
+                .map(appointmentMapper::buildAppointmentExcelResource)
+                .collect(Collectors.toList());
     }
 
     public ResponseEntity<ApiResponse> getAllInProgressAppointmentByDoctorIdForExport(Long doctorId) {
-        var exportData = getAllInProgressAppointmentListByDoctorId(doctorId);
+        var exportData = getAllInProgressAppointmentListByDoctorIdForExport(doctorId);
         Doctor doctor = doctorService.getOneDoctorById(doctorId);
         String fileName = String
-                .join("_", doctor.getFirstName(), doctor.getLastName(),"appointments")
+                .join("_", doctor.getFirstName(), doctor.getLastName(), "appointments")
                 .replace(" ", "_").toLowerCase();
 
-        excelWriteService.writeAppointmentsToExcel(
+        excelWriteService.writeToExcel(
                 exportData,
                 fileName,
                 "DR ID = " + doctor.getId()
@@ -253,13 +258,13 @@ public class AppointmentService {
 
 
     public ResponseEntity<ApiResponse> getAllAppointmentByPatientSsnForExport(String ssn) {
-        var exportData = getAllAppointmentListByPatientSsn(ssn);
+        var exportData = getAllAppointmentListByPatientSsnForExport(ssn);
         Patient patient = patientService.getOnePatientBySsn(ssn);
         String patientFullName = String
                 .join("_", patient.getFirstName(), patient.getLastName())
                 .replace(" ", "_").toLowerCase();
 
-        excelWriteService.writeAppointmentsToExcel(
+        excelWriteService.writeToExcel(
                 exportData,
                 patientFullName,
                 "PATIENT SSN = " + patient.getSsn()
@@ -273,9 +278,9 @@ public class AppointmentService {
     }
 
     public ResponseEntity<ApiResponse> getAllAppointmentByDateForExport(LocalDate date) {
-        var exportData = getAllAppointmentListByDate(date);
+        var exportData = getAllAppointmentListByDateForExport(date);
         String sheetName = String.join(" = ", "APPTS", date.toString());
-        excelWriteService.writeAppointmentsToExcel(
+        excelWriteService.writeToExcel(
                 exportData,
                 date.toString(),
                 sheetName
@@ -295,7 +300,14 @@ public class AppointmentService {
                 .stream()
                 .map(appointmentMapper::buildSimpleAppointmentResponse)
                 .collect(Collectors.toList());
+    }
 
+    private List<AppointmentExcelResource> getAllAppointmentListByPatientSsnForExport(String ssn) {
+        return appointmentRepository
+                .findByPatient_SsnOrderByCreatedAtDesc(ssn)
+                .stream()
+                .map(appointmentMapper::buildAppointmentExcelResource)
+                .collect(Collectors.toList());
     }
 
     public List<SimpleAppointmentResponse> getAllAppointmentListByDate(LocalDate date) {
@@ -304,7 +316,14 @@ public class AppointmentService {
                 .stream()
                 .map(appointmentMapper::buildSimpleAppointmentResponse)
                 .collect(Collectors.toList());
+    }
 
+    private List<AppointmentExcelResource> getAllAppointmentListByDateForExport(LocalDate date) {
+        return appointmentRepository
+                .findByAppointmentDateOrderByDoctor_FirstNameAscCreatedAtAsc(date)
+                .stream()
+                .map(appointmentMapper::buildAppointmentExcelResource)
+                .collect(Collectors.toList());
     }
 
 }

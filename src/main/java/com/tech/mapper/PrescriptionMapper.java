@@ -1,6 +1,6 @@
 package com.tech.mapper;
 
-import com.tech.demo.PrescriptionExportResource;
+import com.tech.payload.resource.PrescriptionExportResource;
 import com.tech.entites.concretes.Doctor;
 import com.tech.entites.concretes.Patient;
 import com.tech.entites.concretes.Prescription;

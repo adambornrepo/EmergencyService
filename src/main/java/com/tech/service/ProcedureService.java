@@ -11,6 +11,7 @@ import com.tech.exception.custom.DataExportException;
 import com.tech.exception.custom.ForbiddenAccessException;
 import com.tech.exception.custom.ResourceNotFoundException;
 import com.tech.exception.custom.UnsuitableRequestException;
+import com.tech.mapper.ProcedureMapper;
 import com.tech.payload.request.ProcedureCreationRequest;
 import com.tech.payload.request.ProcedureCreationRequestForDoctor;
 import com.tech.payload.request.update.ProcedureUpdateRequest;
@@ -45,12 +46,13 @@ public class ProcedureService {
     private final CheckAndCoordinationService coordinationService;
     private final ExcelWriteService excelWriteService;
     private final ApiMessages apiMessages;
+    private final ProcedureMapper procedureMapper;
 
     public ResponseEntity<List<ProcedureResponse>> getAllProcedureByAppointmentId(Long appointmentId) {
         return ResponseEntity.ok(
                 procedureRepository.findByAppointment_Id(appointmentId)
                         .stream()
-                        .map(this::buildProcedureResponse)
+                        .map(procedureMapper::buildProcedureResponse)
                         .collect(Collectors.toList())
         );
     }
@@ -60,7 +62,7 @@ public class ProcedureService {
         if (Objects.equals(type, "DESC")) {
             pageable = PageRequest.of(page, size, Sort.by("isDisabled").ascending().and(Sort.by(sort)).descending());
         }
-        return procedureRepository.findByEmployee_Id(employeeId, pageable).map(this::buildProcedureResponse);
+        return procedureRepository.findByEmployee_Id(employeeId, pageable).map(procedureMapper::buildProcedureResponse);
     }
 
     public ResponseEntity<ProcedureResponse> saveProcedureForDoctor(ProcedureCreationRequestForDoctor request) {
@@ -80,7 +82,7 @@ public class ProcedureService {
                 .isDisabled(false)
                 .build();
         Procedure saved = procedureRepository.save(saveProcedure);
-        return new ResponseEntity<>(buildProcedureResponse(saved), HttpStatus.CREATED);
+        return new ResponseEntity<>(procedureMapper.buildProcedureResponse(saved), HttpStatus.CREATED);
     }
 
     public ResponseEntity<ProcedureResponse> saveProcedure(ProcedureCreationRequest request) {
@@ -108,7 +110,7 @@ public class ProcedureService {
                 .isDisabled(false)
                 .build();
         Procedure saved = procedureRepository.save(saveProcedure);
-        return new ResponseEntity<>(buildProcedureResponse(saved), HttpStatus.CREATED);
+        return new ResponseEntity<>(procedureMapper.buildProcedureResponse(saved), HttpStatus.CREATED);
     }
 
     private Procedure getOneProcedureById(Long procedureId) {
@@ -134,7 +136,7 @@ public class ProcedureService {
 
         foundProcedure.setApplied(request.getApplied());
         Procedure updated = procedureRepository.save(foundProcedure);
-        return new ResponseEntity<>(buildProcedureResponse(updated), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(procedureMapper.buildProcedureResponse(updated), HttpStatus.ACCEPTED);
     }
 
     public ResponseEntity<ApiResponse> deleteProcedure(Long procedureId, UserDetails userDetails) {
@@ -161,22 +163,7 @@ public class ProcedureService {
         );
     }
 
-    private ProcedureResponse buildProcedureResponse(Procedure procedure) {
-        return ProcedureResponse.builder()
-                .id(procedure.getId())
-                .doctorNote(procedure.getDoctorNote())
-                .applied(procedure.getApplied())
-                .appointmentId(procedure.getAppointment().getId())
-                .employeeId(procedure.getEmployee().getId())
-                .employeeFirstName(procedure.getEmployee().getFirstName())
-                .employeeLastName(procedure.getEmployee().getLastName())
-                .createdAt(GeneralUtils.convertMillisToLocalDateTime(procedure.getCreatedAt()))
-                .updatedAt(GeneralUtils.convertMillisToLocalDateTime(procedure.getUpdatedAt()))
-                .isDisabled(procedure.isDisabled())
-                .build();
-    }
-
-    public ResponseEntity<ProcedureResponse> completeProcedure(Long procedureId, UserDetails userDetails) {
+    public ResponseEntity<ApiResponse> completeProcedure(Long procedureId, UserDetails userDetails) {
         Procedure foundProcedure = getOneProcedureById(procedureId);
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
 
@@ -188,7 +175,12 @@ public class ProcedureService {
 
         foundProcedure.setStatus(ProcedureStatus.APPLIED);
         Procedure updated = procedureRepository.save(foundProcedure);
-        return null;
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .success(true)
+                        .message(String.format(apiMessages.getMessage("success.procedure.complete"),updated.getId()))
+                        .build()
+        );
     }
 
 
@@ -201,7 +193,7 @@ public class ProcedureService {
                 procedureRepository.
                         findByEmployee_IdAndStatus(id, ProcedureStatus.NOT_APPLIED)
                         .stream()
-                        .map(this::buildProcedureResponse)
+                        .map(procedureMapper::buildProcedureResponse)
                         .collect(Collectors.toList())
         );
     }
@@ -224,7 +216,7 @@ public class ProcedureService {
         var exportData = procedureRepository
                 .findByEmployee_IdAndAppointment_AppointmentDateOrderByCreatedAtDesc(employeeId, appointmentDate)
                 .stream()
-                .map(this::buildProcedureResponse)
+                .map(procedureMapper::buildProcedureExcelResource)
                 .collect(Collectors.toList());
         if (exportData.isEmpty()) {
             throw new DataExportException(apiMessages.getMessage("error.export.data.empty"));
@@ -237,7 +229,7 @@ public class ProcedureService {
                         appointmentDate.toString()
                 )
                 .replace(" ", "_").toLowerCase();
-        excelWriteService.writeAppointmentsToExcel(
+        excelWriteService.writeToExcel(
                 exportData,
                 fileName,
                 "PERSONAL ID = " + employee.getId()

@@ -4,14 +4,13 @@ import com.tech.entites.abstracts.Employee;
 import com.tech.entites.abstracts.MedicalEmployee;
 import com.tech.entites.enums.ProcedureStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @SuperBuilder
 @Entity

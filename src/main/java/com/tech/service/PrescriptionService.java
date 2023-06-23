@@ -1,7 +1,7 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
-import com.tech.demo.PrescriptionExportResource;
+import com.tech.payload.resource.PrescriptionExportResource;
 import com.tech.entites.abstracts.Employee;
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Doctor;

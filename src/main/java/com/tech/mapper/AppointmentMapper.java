@@ -2,6 +2,7 @@ package com.tech.mapper;
 
 import com.tech.entites.concretes.Appointment;
 import com.tech.entites.concretes.Procedure;
+import com.tech.payload.resource.AppointmentExcelResource;
 import com.tech.payload.response.detailed.DetailedAppointmentResponse;
 import com.tech.payload.response.simple.SimpleAppointmentResponse;
 import com.tech.utils.GeneralUtils;
@@ -49,6 +50,26 @@ public class AppointmentMapper {
 
     public SimpleAppointmentResponse buildSimpleAppointmentResponse(Appointment appointment) {
         var builder = SimpleAppointmentResponse.builder()
+                .appointment_id(appointment.getId())
+                .symptoms(appointment.getSymptoms())
+                .appointmentDate(appointment.getAppointmentDate())
+                .status(appointment.getStatus());
+
+        if (appointment.getDoctor() != null) {
+            builder.doctorId(appointment.getDoctor().getId());
+            builder.doctorFirstName(appointment.getDoctor().getFirstName());
+            builder.doctorLastName(appointment.getDoctor().getLastName());
+        }
+        if (appointment.getPatient() != null) {
+            builder.patientSsn(appointment.getPatient().getSsn());
+            builder.patientFirstName(appointment.getPatient().getFirstName());
+            builder.patientLastName(appointment.getPatient().getLastName());
+        }
+        return builder.build();
+    }
+
+    public AppointmentExcelResource buildAppointmentExcelResource(Appointment appointment) {
+        var builder = AppointmentExcelResource.builder()
                 .appointment_id(appointment.getId())
                 .symptoms(appointment.getSymptoms())
                 .appointmentDate(appointment.getAppointmentDate())

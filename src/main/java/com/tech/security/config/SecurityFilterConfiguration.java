@@ -55,7 +55,10 @@ public class SecurityFilterConfiguration {
             "/index*",
             "/static/**",
             "/*.js",
-            "/*.json"
+            "/*.json",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger*/**"
     };
 
 
