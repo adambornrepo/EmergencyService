@@ -37,7 +37,6 @@ public abstract class Person implements Serializable {
     @Column(nullable = false, length = 6)
     private Gender gender;
 
-    // TODO: 5.06.2023 pattern
     @Column(
             nullable = false,
             unique = true,
@@ -45,7 +44,6 @@ public abstract class Person implements Serializable {
     )
     private String ssn;
 
-    // TODO: 5.06.2023 pattern
     @Column(
             nullable = false,
             length = 50,
@@ -56,7 +54,6 @@ public abstract class Person implements Serializable {
     @Embedded
     private Address address;
 
-    // TODO: 5.06.2023 Entity role maybe
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Enumerated(EnumType.STRING)
     @Column(length = 32)
@@ -67,4 +64,19 @@ public abstract class Person implements Serializable {
 
     private long updatedAt;
 
+    @Override
+    public String toString() {
+        return "{ " +
+                "FirstName= " + firstName +
+                ", LastName= " + lastName +
+                ", BirthDate= " + birthDate +
+                ", Gender= " + gender +
+                ", Ssn= " + ssn +
+                ", PhoneNumber= " + phoneNumber +
+                ", Address= " + address +
+                ", Role= " + role +
+                ", CreatedAt= " + createdAt +
+                ", UpdatedAt= " + updatedAt +
+                 " }";
+    }
 }

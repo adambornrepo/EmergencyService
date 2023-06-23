@@ -64,6 +64,7 @@ public class AppointmentService {
                 .isDisabled(false)
                 .build();
         Appointment saved = appointmentRepository.save(appointment);
+        log.info("Appointment created: {}", saved);
         return new ResponseEntity<>(appointmentMapper.buildSimpleAppointmentResponse(saved), HttpStatus.CREATED);
     }
 
@@ -91,6 +92,7 @@ public class AppointmentService {
             updateAppointment.setSymptoms(request.getSymptoms());
         }
         Appointment updated = appointmentRepository.save(updateAppointment);
+        log.info("Appointment updated: {}", updated);
         return new ResponseEntity<>(appointmentMapper.buildDetailedAppointmentResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -110,6 +112,7 @@ public class AppointmentService {
         cancel.setStatus(AppointmentStatus.CANCELED);
 
         Appointment canceled = appointmentRepository.save(cancel);
+        log.info("Appointment canceled: {}", canceled);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -139,6 +142,7 @@ public class AppointmentService {
         complete.setStatus(AppointmentStatus.COMPLETED);
 
         Appointment completed = appointmentRepository.save(complete);
+        log.info("Appointment completed: {}", completed);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -175,6 +179,7 @@ public class AppointmentService {
         foundAppointment.setDisabled(true);
 
         Appointment deleted = appointmentRepository.save(foundAppointment);
+        log.info("Appointment deleted: {}", deleted);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -248,6 +253,7 @@ public class AppointmentService {
                 fileName,
                 "DR ID = " + doctor.getId()
         );
+        log.warn("Appointment exported to Excel by doctor id: {}", doctorId);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -269,6 +275,7 @@ public class AppointmentService {
                 patientFullName,
                 "PATIENT SSN = " + patient.getSsn()
         );
+        log.warn("Appointment exported to Excel by patient ssn: {}", ssn);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -285,7 +292,7 @@ public class AppointmentService {
                 date.toString(),
                 sheetName
         );
-
+        log.warn("Appointment exported to Excel by date: {}", date);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)

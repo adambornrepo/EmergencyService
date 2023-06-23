@@ -16,11 +16,6 @@ import java.io.Serializable;
 @Builder
 public class Address implements Serializable {
 
-
-    @Size(min = 3, max = 16,message ="{validation.size.field}" )
-    @Column(length = 16)
-    private String zipCode;
-
     @Size(min = 2, max = 100,message = "{validation.size.field}")
     @Column(length = 100)
     private String street;
@@ -33,4 +28,17 @@ public class Address implements Serializable {
     @Column(length = 50)
     private String state;
 
+    @Size(min = 3, max = 16,message ="{validation.size.field}" )
+    @Column(length = 16)
+    private String zipCode;
+
+    @Override
+    public String toString() {
+        return "{ " +
+                "Street= " + street +
+                ", City= " + city +
+                ", State= " + state +
+                ", ZipCode= " + zipCode +
+                " }";
+    }
 }

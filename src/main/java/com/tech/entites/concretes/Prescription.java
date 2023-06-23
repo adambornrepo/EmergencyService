@@ -43,5 +43,14 @@ public class Prescription implements Serializable {
         setCreatedAt(System.currentTimeMillis());
     }
 
-
+    @Override
+    public String toString() {
+        return "Prescription{ " +
+                "Id= " + id +
+                ", Medicines={ " + medicines + " }" +
+                ", Doctor Id= " + doctor.getId() +
+                ", Appointment Id= " + appointment.getId() +
+                ", CreatedAt= " + createdAt +
+                '}';
+    }
 }

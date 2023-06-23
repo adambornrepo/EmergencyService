@@ -92,7 +92,6 @@ public class PrescriptionPdfService {
             contentStream.close();
 
             document.save(pdfFilePath);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

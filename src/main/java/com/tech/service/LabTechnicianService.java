@@ -99,6 +99,7 @@ public class LabTechnicianService {
         labTech.setPassword(passwordEncoder.encode(labTech.getPassword()));
         labTech.setRole(Role.LAB_TECHNICIAN);
         LabTechnician saved = labTechnicianRepository.save(labTech);
+        log.info("Laboratory Technician saved: {}", saved);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(saved), HttpStatus.CREATED);
     }
 
@@ -119,6 +120,7 @@ public class LabTechnicianService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         LabTechnician updated = labTechnicianRepository.save(found);
+        log.info("Laboratory Technician updated: {}", updated);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -138,6 +140,7 @@ public class LabTechnicianService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         LabTechnician deleted = labTechnicianRepository.save(found);
+        log.info("Laboratory Technician deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.lab-tech.delete")).build(),
                 HttpStatus.OK

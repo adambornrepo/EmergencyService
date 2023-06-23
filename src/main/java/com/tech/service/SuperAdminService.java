@@ -77,6 +77,7 @@ public class SuperAdminService {
         superAdmin.setPassword(passwordEncoder.encode(superAdmin.getPassword()));
         superAdmin.setRole(Role.SUPER_ADMIN);
         SuperAdmin saved = superAdminRepository.save(superAdmin);
+        log.warn("Super Admin created: {}", saved);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(saved), HttpStatus.CREATED);
     }
 
@@ -91,6 +92,7 @@ public class SuperAdminService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         SuperAdmin updated = superAdminRepository.save(found);
+        log.warn("Super Admin updated: {}", updated);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -107,6 +109,7 @@ public class SuperAdminService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         SuperAdmin deleted = superAdminRepository.save(found);
+        log.warn("Super Admin deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.super-admin.delete")).build(),
                 HttpStatus.OK

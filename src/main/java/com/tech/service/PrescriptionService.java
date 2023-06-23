@@ -68,7 +68,7 @@ public class PrescriptionService {
                 .appointment(appointmentFound)
                 .build();
         Prescription saved = prescriptionRepository.save(savePrescription);
-
+        log.info("Prescription created: {}", saved);
         if (appointmentFound.getPatient().getEmail() != null) {
             try {
                 sendPrescriptionToPatientEmailById(saved);
@@ -114,6 +114,7 @@ public class PrescriptionService {
         }
 
         Prescription updated = prescriptionRepository.save(foundPrescription);
+        log.info("Prescription updated: {}", updated);
         return new ResponseEntity<>(prescriptionMapper.buildDetailedPrescriptionResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -142,6 +143,7 @@ public class PrescriptionService {
         }
 
         prescriptionRepository.delete(deletePrescription);
+        log.info("Prescription deleted by id: {}", id);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -154,7 +156,7 @@ public class PrescriptionService {
         Prescription prescription = getOnePrescriptionById(prescriptionId);
         PrescriptionExportResource exportData = prescriptionMapper.buildPrescriptionExportResource(prescription);
         prescriptionPdfService.createPdf(exportData);
-
+        log.info("Prescription exported to PDF: {}", exportData.getFileName());
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -176,6 +178,7 @@ public class PrescriptionService {
             );
         }
         emailService.sendPrescriptionEmail(exportData, exportData.getPatientEmail());
+        log.info("Prescription sent to email: {}", exportData.getPatientEmail());
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)

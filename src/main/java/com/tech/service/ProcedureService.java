@@ -82,6 +82,7 @@ public class ProcedureService {
                 .isDisabled(false)
                 .build();
         Procedure saved = procedureRepository.save(saveProcedure);
+        log.info("Procedure created: {}", saved);
         return new ResponseEntity<>(procedureMapper.buildProcedureResponse(saved), HttpStatus.CREATED);
     }
 
@@ -110,6 +111,7 @@ public class ProcedureService {
                 .isDisabled(false)
                 .build();
         Procedure saved = procedureRepository.save(saveProcedure);
+        log.info("Procedure created: {}", saved);
         return new ResponseEntity<>(procedureMapper.buildProcedureResponse(saved), HttpStatus.CREATED);
     }
 
@@ -136,6 +138,7 @@ public class ProcedureService {
 
         foundProcedure.setApplied(request.getApplied());
         Procedure updated = procedureRepository.save(foundProcedure);
+        log.info("Procedure updated: {}", updated);
         return new ResponseEntity<>(procedureMapper.buildProcedureResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -155,6 +158,7 @@ public class ProcedureService {
         foundProcedure.setDisabled(true);
 
         Procedure deleted = procedureRepository.save(foundProcedure);
+        log.warn("Procedure deleted: {}", deleted);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
@@ -174,11 +178,12 @@ public class ProcedureService {
         checkProcedureIsAvailable(foundProcedure);
 
         foundProcedure.setStatus(ProcedureStatus.APPLIED);
-        Procedure updated = procedureRepository.save(foundProcedure);
+        Procedure completed = procedureRepository.save(foundProcedure);
+        log.info("Procedure completed: {}", completed);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)
-                        .message(String.format(apiMessages.getMessage("success.procedure.complete"),updated.getId()))
+                        .message(String.format(apiMessages.getMessage("success.procedure.complete"),completed.getId()))
                         .build()
         );
     }
@@ -234,6 +239,7 @@ public class ProcedureService {
                 fileName,
                 "PERSONAL ID = " + employee.getId()
         );
+        log.warn("Procedure exported to Excel by date: {}", appointmentDate);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)

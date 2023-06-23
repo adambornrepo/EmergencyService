@@ -49,6 +49,7 @@ public class EmployeeService {
                 String.join("_", "Active", "Employee", date),
                 "DATE = " + date
         );
+        log.warn("All active Employees' info exported to Excel on date: {}", date);
         return ResponseEntity.ok(
                 ApiResponse.builder()
                         .success(true)

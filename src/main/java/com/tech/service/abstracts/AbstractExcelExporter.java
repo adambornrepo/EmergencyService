@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public abstract class AbstractExcelExporter {
@@ -73,6 +74,7 @@ public abstract class AbstractExcelExporter {
             }
 
             workbook.write(fos);
+            log.warn("Data exported to Excel at: {}", LocalDateTime.now());
         } catch (IOException e) {
             log.error("Excel data export error : {}", e.getMessage());
             throw new DataExportException(e.getMessage());

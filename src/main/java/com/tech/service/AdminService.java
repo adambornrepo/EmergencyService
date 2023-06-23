@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Slf4j//logger
+@Slf4j
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -94,6 +94,7 @@ public class AdminService {
         admin.setPassword(passwordEncoder.encode(admin.getPassword()));
         admin.setRole(Role.ADMIN);
         Admin saved = adminRepository.save(admin);
+        log.warn("New admin created: {}", saved);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(saved), HttpStatus.CREATED);
     }
 
@@ -112,6 +113,7 @@ public class AdminService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         Admin updated = adminRepository.save(found);
+        log.warn("Admin updated: {}", updated);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -129,6 +131,7 @@ public class AdminService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         Admin deleted = adminRepository.save(found);
+        log.warn("Admin deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.admin.delete")).build(),
                 HttpStatus.OK

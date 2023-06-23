@@ -97,6 +97,7 @@ public class RepresentativeService {
         representative.setPassword(passwordEncoder.encode(representative.getPassword()));
         representative.setRole(Role.PSR);
         Representative saved = representativeRepository.save(representative);
+        log.info("PSR saved: {}", saved);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(saved), HttpStatus.CREATED);
     }
 
@@ -117,6 +118,7 @@ public class RepresentativeService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         Representative updated = representativeRepository.save(found);
+        log.info("PSR updated: {}", updated);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -136,6 +138,7 @@ public class RepresentativeService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         Representative deleted = representativeRepository.save(found);
+        log.info("PSR deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.psr.delete")).build(),
                 HttpStatus.OK

@@ -49,7 +49,6 @@ public class Appointment implements Serializable {
     private Patient patient;
 
     private LocalDate appointmentDate;
-    // TODO: 7.06.2023 Appointment time konusu belirli değil
 
     @OneToMany(mappedBy = "appointment", fetch = FetchType.LAZY)
     private List<Procedure> procedures;
@@ -65,5 +64,21 @@ public class Appointment implements Serializable {
     @PrePersist
     public void creationTime() {
         setCreatedAt(System.currentTimeMillis());
+    }
+
+    @Override
+    public String toString() {
+        return "Appointment{ " +
+                "Id= " + id +
+                ", Symptoms= " + symptoms +
+                ", Status= " + status +
+                ", Representative Id= " + representative.getId() +
+                ", Doctor Id= " + doctor.getId() +
+                ", Patient SSN= " + patient.getSsn() +
+                ", AppointmentDate= " + appointmentDate +
+                ", Prescription Id= " + prescription.getId() +
+                ", IsDisabled= " + isDisabled +
+                ", CreatedAt= " + createdAt +
+                " }";
     }
 }

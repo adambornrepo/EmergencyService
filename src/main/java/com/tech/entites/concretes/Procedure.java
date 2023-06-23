@@ -36,7 +36,7 @@ public class Procedure implements Serializable {
     private String applied;
 
     @Enumerated(EnumType.STRING)
-    //@Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     ProcedureStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,4 +65,18 @@ public class Procedure implements Serializable {
         setUpdatedAt(System.currentTimeMillis());
     }
 
+    @Override
+    public String toString() {
+        return "Procedure{ " +
+                "Id= " + id +
+                ", DoctorNote= " + doctorNote +
+                ", Applied= " + applied +
+                ", Status= " + status +
+                ", Appointment Id= " + appointment.getId() +
+                ", IsDisabled= " + isDisabled +
+                ", CreatedAt= " + createdAt +
+                ", UpdatedAt= " + updatedAt +
+                ", Employee Id= " + employee.getId() +
+                " }";
+    }
 }

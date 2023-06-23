@@ -101,6 +101,7 @@ public class DoctorService {
         doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
         doctor.setRole(Role.DOCTOR);
         Doctor saved = doctorRepository.save(doctor);
+        log.info("Doctor saved: {}", saved);
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(saved), HttpStatus.CREATED);
     }
 
@@ -121,6 +122,7 @@ public class DoctorService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         Doctor updated = doctorRepository.save(found);
+        log.info("Doctor updated: {}", updated);
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -144,6 +146,7 @@ public class DoctorService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         Doctor deleted = doctorRepository.save(found);
+        log.info("Doctor deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.doctor.delete")).build(),
                 HttpStatus.OK
@@ -165,6 +168,7 @@ public class DoctorService {
         doctor.setRole(Role.CHIEF);
         doctor.setZone(Zone.NONE);
         Doctor assigned = doctorRepository.save(doctor);
+        log.warn("Doctor assigned as chief physician: {}", assigned);
         return ResponseEntity.ok(doctorMapper.buildDetailedDoctorResponse(assigned));
     }
 

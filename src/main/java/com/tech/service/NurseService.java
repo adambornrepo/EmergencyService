@@ -98,6 +98,7 @@ public class NurseService {
         nurse.setPassword(passwordEncoder.encode(nurse.getPassword()));
         nurse.setRole(Role.NURSE);
         Nurse saved = nurseRepository.save(nurse);
+        log.info("Nurse saved: {}", saved);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(saved), HttpStatus.CREATED);
     }
 
@@ -118,6 +119,7 @@ public class NurseService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         Nurse updated = nurseRepository.save(found);
+        log.info("Nurse updated: {}", updated);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -137,6 +139,7 @@ public class NurseService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         Nurse deleted = nurseRepository.save(found);
+        log.info("Nurse deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.nurse.delete")).build(),
                 HttpStatus.OK

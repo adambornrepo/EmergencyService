@@ -9,3 +9,4 @@ logging:
         web: WARN
       hibernate: INFO
     com.tpe: INFO
+  encoding: UTF-8

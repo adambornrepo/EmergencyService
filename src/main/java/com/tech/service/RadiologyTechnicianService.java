@@ -98,6 +98,7 @@ public class RadiologyTechnicianService {
         radiologyTech.setPassword(passwordEncoder.encode(radiologyTech.getPassword()));
         radiologyTech.setRole(Role.RADIOLOGY_TECHNICIAN);
         RadiologyTechnician saved = radiologyTechRepository.save(radiologyTech);
+        log.info("Radiology Technician saved: {}", saved);
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(saved), HttpStatus.CREATED);
     }
 
@@ -119,6 +120,7 @@ public class RadiologyTechnicianService {
         request.accept(found);
         found.setPassword(passwordEncoder.encode(found.getPassword()));
         RadiologyTechnician updated = radiologyTechRepository.save(found);
+        log.info("Radiology Technician updated: {}", updated);
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(updated), HttpStatus.ACCEPTED);
     }
 
@@ -139,6 +141,7 @@ public class RadiologyTechnicianService {
         found.setPhoneNumber(mark + found.getPhoneNumber());
         found.setDisabled(true);
         RadiologyTechnician deleted = radiologyTechRepository.save(found);
+        log.info("Radiology Technician deleted: {}", deleted);
         return new ResponseEntity<ApiResponse>(
                 ApiResponse.builder().success(true).message(apiMessages.getMessage("success.rad-tech.delete")).build(),
                 HttpStatus.OK
