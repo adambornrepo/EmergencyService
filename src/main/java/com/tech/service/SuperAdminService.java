@@ -14,6 +14,7 @@ import com.tech.security.role.Role;
 import com.tech.utils.GeneralUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -70,7 +71,7 @@ public class SuperAdminService {
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(apiMessages.getMessage("error.not.found.super-admin.id"), id)));
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeSuperAdmins"}, allEntries = true)
     public ResponseEntity<DetailedSuperAdminResponse> saveSuperAdmin(SuperAdminRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         SuperAdmin superAdmin = request.get();
@@ -80,7 +81,7 @@ public class SuperAdminService {
         log.warn("Super Admin created: {}", saved);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(saved), HttpStatus.CREATED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeSuperAdmins"}, allEntries = true)
     public ResponseEntity<DetailedSuperAdminResponse> updateSuperAdmin(SuperAdminUpdateRequest request, Long id) {
         SuperAdmin found = getOneSuperAdminById(id);
         if (found.isDisabled()) {
@@ -95,7 +96,7 @@ public class SuperAdminService {
         log.warn("Super Admin updated: {}", updated);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(updated), HttpStatus.ACCEPTED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeSuperAdmins"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteSuperAdmin(Long id) {
         SuperAdmin found = getOneSuperAdminById(id);
         if (found.isDisabled()) {

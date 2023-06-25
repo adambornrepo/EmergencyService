@@ -96,7 +96,10 @@ public class PatientService {
             throw new UnsuitableRequestException(String.format(apiMessages.getMessage("error.not.exists.ssn"), ssn));
         }
         if (!found.getPhoneNumber().equals(request.getPhoneNumber())) {
-            checkDuplicateForPatient(null, request.getPhoneNumber(), request.getEmail());
+            checkDuplicateForPatient(null, request.getPhoneNumber(), null);
+        }
+        if (found.getEmail() == null || !found.getEmail().equals(request.getEmail())) {
+            checkDuplicateForPatient(null, null, request.getEmail());
         }
         request.accept(found);
         Patient updated = patientRepository.save(found);

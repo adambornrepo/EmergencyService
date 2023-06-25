@@ -28,9 +28,9 @@ public class SchedulerService {
     @Scheduled(cron = "${scheduler.cron.pattern.applied}")
     public void updateAppliedAppointmentsAndProceduresPeriodically() {
         try {
-            coordinationService.updateStatusForAppliedAppointmentsAndProcedures();
+            coordinationService.updateStatusForAppliedProcedures();
         } catch (Exception e) {
-            log.error("Error updating applied appointments and procedures : " + e.getMessage());
+            log.error("Error updating applied procedures : " + e.getMessage());
             throw new SchedulerException(String.format(apiMessages.getMessage("error.scheduler.update.applied"), e.getMessage()));
         }
     }

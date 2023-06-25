@@ -28,7 +28,7 @@ public class RepresentativeRegistrationRequest extends BaseRegistrationRequest i
     public Representative get() {
         return Representative.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

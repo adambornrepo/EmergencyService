@@ -96,7 +96,7 @@ public class ProcedureService {
         }
 
         MedicalEmployee employee = coordinationService.getOneMedicalEmployeeById(request.getEmployeeId());
-        if (employee == null) {
+        if (employee == null || employee.isDisabled()) {
             throw new ResourceNotFoundException(
                     String.format(apiMessages.getMessage("error.not.found.medical.employee.id"), request.getEmployeeId())
             );

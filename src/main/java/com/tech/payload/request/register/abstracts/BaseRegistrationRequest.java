@@ -41,12 +41,12 @@ public abstract class BaseRegistrationRequest implements Serializable {
     @NotNull(message = "{validation.null.gender}")
     private Gender gender;
 
-    @SSN
     @NotNull(message = "{validation.null.ssn}")
+    @SSN
     private String ssn;
 
-    @PhoneNumber
     @NotNull(message = "{validation.null.phone}")
+    @PhoneNumber
     private String phoneNumber;
 
     @Valid

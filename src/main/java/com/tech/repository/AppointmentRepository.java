@@ -19,13 +19,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByAppointmentDateOrderByDoctor_FirstNameAscCreatedAtAsc(LocalDate appointmentDate);
     List<Appointment> findByPatient_SsnOrderByCreatedAtDesc(String ssn);
     List<Appointment> findByDoctor_IdAndStatusOrderByCreatedAtAsc(Long id, AppointmentStatus status);
-    List<Appointment> findByStatusAndCreatedAtLessThanAndProceduresNullAndPrescriptionNull(AppointmentStatus status, long createdAt);
-
-    @Query("SELECT a FROM Appointment a WHERE a.status = :status AND a.createdAt < :createdAt AND (a.procedures IS NOT NULL OR a.prescription IS NOT NULL)")
-    List<Appointment> findByStatusAndCreatedAtLessThanAndProceduresNotNullORPrescriptionNotNull(
-            @Param("status") AppointmentStatus appointmentStatus,
-            @Param("createdAt") long aDayBefore
-    );
+    List<Appointment> findByStatusAndCreatedAtLessThan(AppointmentStatus status, long createdAt);
 
     Page<Appointment> findAppointmentByPatient_Ssn(String ssn, Pageable pageable);
 

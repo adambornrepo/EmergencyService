@@ -61,6 +61,7 @@ public class AppointmentService {
                 .symptoms(request.getSymptoms())
                 .status(AppointmentStatus.IN_PROGRESS)
                 .appointmentDate(LocalDate.now())
+                .prescription(null)
                 .isDisabled(false)
                 .build();
         Appointment saved = appointmentRepository.save(appointment);
@@ -79,7 +80,7 @@ public class AppointmentService {
                     String.format(apiMessages.getMessage("error.no.action.appointment.status"), updateAppointment.getStatus())
             );
         }
-        if (updateAppointment.getProcedures() != null || updateAppointment.getPrescription() != null) {
+        if (!updateAppointment.getProcedures().isEmpty() || updateAppointment.getPrescription() != null) {
             throw new UnsuitableRequestException(apiMessages.getMessage("error.no.action.appointment.change"));
         }
 
@@ -106,7 +107,7 @@ public class AppointmentService {
                     String.format(apiMessages.getMessage("error.no.action.appointment.status"), cancel.getStatus())
             );
         }
-        if (cancel.getProcedures() != null || cancel.getPrescription() != null) {
+        if (!cancel.getProcedures().isEmpty()  || cancel.getPrescription() != null) {
             throw new UnsuitableRequestException(apiMessages.getMessage("error.no.action.appointment.change"));
         }
         cancel.setStatus(AppointmentStatus.CANCELED);
@@ -170,11 +171,10 @@ public class AppointmentService {
                     String.format(apiMessages.getMessage("error.no.action.appointment.status"), foundAppointment.getStatus())
             );
         }
-        if (foundAppointment.getProcedures() != null || foundAppointment.getPrescription() != null) {
+        if (!foundAppointment.getProcedures().isEmpty()|| foundAppointment.getPrescription() != null) {
             throw new UnsuitableRequestException(apiMessages.getMessage("error.no.action.appointment.change"));
         }
 
-        foundAppointment.setDoctor(null);
         foundAppointment.setStatus(AppointmentStatus.DELETED);
         foundAppointment.setDisabled(true);
 

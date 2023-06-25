@@ -28,7 +28,7 @@ public class AdminRegistrationRequest extends BaseRegistrationRequest implements
     public Admin get() {
         return Admin.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

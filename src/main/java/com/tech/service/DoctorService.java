@@ -18,6 +18,8 @@ import com.tech.repository.DoctorRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -95,6 +97,7 @@ public class DoctorService {
         return doctorRepository.findAll(pageable).map(doctorMapper::buildSimpleDoctorResponse);
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeDoctors"}, allEntries = true)
     public ResponseEntity<DetailedDoctorResponse> saveDoctor(DoctorRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Doctor doctor = request.get();
@@ -105,6 +108,7 @@ public class DoctorService {
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(saved), HttpStatus.CREATED);
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeDoctors"}, allEntries = true)
     public ResponseEntity<DetailedDoctorResponse> updateDoctor(DoctorUpdateRequest request, Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -126,6 +130,7 @@ public class DoctorService {
         return new ResponseEntity<>(doctorMapper.buildDetailedDoctorResponse(updated), HttpStatus.ACCEPTED);
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeDoctors"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteDoctor(Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -153,6 +158,7 @@ public class DoctorService {
         );
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeDoctors"}, allEntries = true)
     public ResponseEntity<DetailedDoctorResponse> assignChiefPhysician(Long id) {
         Doctor doctor = getOneDoctorById(id);
         Doctor chiefPhysician = getChiefPhysician();
@@ -176,7 +182,7 @@ public class DoctorService {
         return doctorRepository.findByRole(Role.CHIEF).orElse(null);
     }
 
-
+    @Cacheable(value = "activeDoctors")
     public List<SimpleDoctorResponse> getAllActiveDoctor(Zone zone) {
         if (zone == null) {
             return doctorRepository.findByIsDisabledOrderByFirstNameAsc(false)
@@ -191,6 +197,7 @@ public class DoctorService {
         }
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeDoctors"}, allEntries = true)
     public ResponseEntity<DetailedDoctorResponse> updateDoctorZone(Zone zone, Long id) {
         Doctor found = getOneDoctorById(id);
         if (found.isDisabled()) {

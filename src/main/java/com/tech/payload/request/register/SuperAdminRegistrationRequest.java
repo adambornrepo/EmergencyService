@@ -28,7 +28,7 @@ public class SuperAdminRegistrationRequest extends BaseRegistrationRequest imple
     public SuperAdmin get() {
         return SuperAdmin.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

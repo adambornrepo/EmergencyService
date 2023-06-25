@@ -89,7 +89,12 @@ public class AppointmentMapper {
     }
 
     private Map<Long, String> buildProcedureSummary(List<Procedure> procedures) {
-        return procedures.stream().collect(Collectors.toMap(Procedure::getId, Procedure::getApplied));
+        return procedures.stream().collect(
+                Collectors.toMap(
+                        Procedure::getId,
+                        procedure -> procedure.getApplied() != null ? procedure.getApplied() : procedure.getStatus().name()
+                )
+        );
     }
 
 

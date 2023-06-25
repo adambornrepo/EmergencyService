@@ -61,7 +61,7 @@ public class ProcedureController {
             summary = "Get all procedures for export to Excel by employee ID and date",
             description = "Retrieves a response for exporting procedures based on the employee ID and date."
     )
-    @GetMapping("/getAll/export/employee")
+    @PostMapping("/getAll/export/employee")
     @PreAuthorize("hasAnyAuthority('admin:create','chief:create')")
     public ResponseEntity<ApiResponse> getAllProcedureByEmployeeIdForExport(
             @RequestParam("id") Long id, @RequestParam("on") LocalDate date
@@ -133,7 +133,7 @@ public class ProcedureController {
             description = "Deletes an existing procedure owned by the medical employee."
     )
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAnyAuthority(,'chief:delete','doctor:delete','nurse:delete','lab_tech:delete','radiology_tech:delete')")
+    @PreAuthorize("hasAnyAuthority('chief:delete','doctor:delete','nurse:delete','lab_tech:delete','radiology_tech:delete')")
     public ResponseEntity<ApiResponse> deleteProcedure(@RequestParam("id") Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return procedureService.deleteProcedure(id, userDetails);
     }

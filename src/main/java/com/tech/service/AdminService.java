@@ -17,6 +17,7 @@ import com.tech.repository.AdminRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -87,7 +88,7 @@ public class AdminService {
     public Page<SimpleAdminResponse> getAllAdmin(Pageable pageable) {
         return adminRepository.findAll(pageable).map(adminMapper::buildSimpleAdminResponse);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<DetailedAdminResponse> saveAdmin(AdminRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Admin admin = request.get();
@@ -97,7 +98,7 @@ public class AdminService {
         log.warn("New admin created: {}", saved);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(saved), HttpStatus.CREATED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<DetailedAdminResponse> updateAdmin(AdminUpdateRequest request, Long id, UserDetails userDetails) {
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
         if (employee.getRole().equals(Role.ADMIN) && !employee.getId().equals(id)) {
@@ -116,7 +117,7 @@ public class AdminService {
         log.warn("Admin updated: {}", updated);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(updated), HttpStatus.ACCEPTED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteAdmin(Long id, UserDetails userDetails) {
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
         if (employee.getRole().equals(Role.ADMIN) && !employee.getId().equals(id)) {

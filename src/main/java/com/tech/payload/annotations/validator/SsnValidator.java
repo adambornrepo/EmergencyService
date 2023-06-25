@@ -10,6 +10,7 @@ public class SsnValidator implements ConstraintValidator<SSN, String> {
 
     @Override
     public boolean isValid(String ssn, ConstraintValidatorContext context) {
+        if (ssn == null) return true;
         if (!ssn.matches("^[0-9-]+$")) {
             context.disableDefaultConstraintViolation();
             context

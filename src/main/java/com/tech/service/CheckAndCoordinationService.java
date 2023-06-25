@@ -120,12 +120,11 @@ public class CheckAndCoordinationService {
                 ));
     }
 
-    @Transactional
     public void updateStatusForExpiredAppointmentsAndProcedures() {
-        long aDayBefore = System.currentTimeMillis() - certainTime;
+        long timeRange = System.currentTimeMillis() - certainTime;
 
         List<Procedure> expiredProcedures = procedureRepository
-                .findByStatusAndCreatedAtLessThanAndAppliedNull(ProcedureStatus.NOT_APPLIED, aDayBefore);
+                .findByStatusAndCreatedAtLessThanAndAppliedNull(ProcedureStatus.NOT_APPLIED, timeRange);
         for (Procedure expiredProcedure : expiredProcedures) {
             expiredProcedure.setStatus(ProcedureStatus.NOT_ARRIVED);
         }
@@ -133,35 +132,25 @@ public class CheckAndCoordinationService {
         log.info("Updated status to 'NOT ARRIVED' for {} expired procedures", notArrivedProcedures.size());
 
         List<Appointment> expiredAppointments = appointmentRepository
-                .findByStatusAndCreatedAtLessThanAndProceduresNullAndPrescriptionNull(AppointmentStatus.IN_PROGRESS, aDayBefore);
+                .findByStatusAndCreatedAtLessThan(AppointmentStatus.IN_PROGRESS, timeRange);
         for (Appointment expiredAppointment : expiredAppointments) {
-            expiredAppointment.setStatus(AppointmentStatus.NOT_ARRIVED);
+            expiredAppointment.setStatus(AppointmentStatus.AUTO_CLOSED);
         }
         List<Appointment> notArrivedAppointments = appointmentRepository.saveAll(expiredAppointments);
-        log.info("Updated status to 'NOT ARRIVED' for {} expired appointments", notArrivedAppointments.size());
+        log.info("Updated status to 'AUTO CLOSED' for {} expired appointments", notArrivedAppointments.size());
 
     }
 
-    @Transactional
-    public void updateStatusForAppliedAppointmentsAndProcedures() {
-        long aDayBefore = System.currentTimeMillis() - certainTime;
+    public void updateStatusForAppliedProcedures() {
+        long timeRange = System.currentTimeMillis() - certainTime;
 
         List<Procedure> appliedProcedures = procedureRepository
-                .findByStatusAndCreatedAtLessThanAndAppliedNotNull(ProcedureStatus.NOT_APPLIED, aDayBefore);
+                .findByStatusAndCreatedAtLessThanAndAppliedNotNull(ProcedureStatus.NOT_APPLIED, timeRange);
         for (Procedure appliedProcedure : appliedProcedures) {
             appliedProcedure.setStatus(ProcedureStatus.APPLIED);
         }
         List<Procedure> completedProcedures = procedureRepository.saveAll(appliedProcedures);
         log.info("Status updated to 'APPLIED' for {} procedures with a status of 'NOT APPLIED' even though the action has been taken", completedProcedures.size());
-
-        List<Appointment> appliedAppointments = appointmentRepository
-                .findByStatusAndCreatedAtLessThanAndProceduresNotNullORPrescriptionNotNull(AppointmentStatus.IN_PROGRESS, aDayBefore);
-        for (Appointment appliedAppointment : appliedAppointments) {
-            appliedAppointment.setStatus(AppointmentStatus.COMPLETED);
-        }
-        List<Appointment> completedAppointments = appointmentRepository.saveAll(appliedAppointments);
-        log.info("Status updated to 'COMPLETED' for {} appointments with a status of 'IN PROGRESS' even though the action has been taken", completedAppointments.size());
-
     }
 
 

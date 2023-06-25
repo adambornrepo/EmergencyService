@@ -28,7 +28,7 @@ public class LabTechRegistrationRequest extends BaseRegistrationRequest implemen
     public LabTechnician get() {
         return LabTechnician.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

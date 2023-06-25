@@ -17,6 +17,8 @@ import com.tech.repository.RepresentativeRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -91,6 +93,7 @@ public class RepresentativeService {
         return representativeRepository.findAll(pageable).map(representativeMapper::buildSimpleRepresentativeResponse);
     }
 
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRepresentatives"}, allEntries = true)
     public ResponseEntity<DetailedRepresentativeResponse> saveRepresentative(RepresentativeRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Representative representative = request.get();
@@ -100,7 +103,7 @@ public class RepresentativeService {
         log.info("PSR saved: {}", saved);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(saved), HttpStatus.CREATED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRepresentatives"}, allEntries = true)
     public ResponseEntity<DetailedRepresentativeResponse> updateRepresentative(RepresentativeUpdateRequest request, Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -121,7 +124,7 @@ public class RepresentativeService {
         log.info("PSR updated: {}", updated);
         return new ResponseEntity<>(representativeMapper.buildDetailedRepresentativeResponse(updated), HttpStatus.ACCEPTED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRepresentatives"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteRepresentative(Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -144,7 +147,7 @@ public class RepresentativeService {
                 HttpStatus.OK
         );
     }
-
+    @Cacheable(value = "activeRepresentatives")
     public List<SimpleRepresentativeResponse> getAllActiveRepresentative() {
         return representativeRepository.findByIsDisabled(false)
                 .stream()

@@ -9,11 +9,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDate;
 
 @SpringBootApplication
+@EnableCaching
+@EnableScheduling
 @RequiredArgsConstructor
 public class EmergencyserviceApplication implements CommandLineRunner {
     private final SuperAdminService superAdminService;
@@ -30,7 +34,7 @@ public class EmergencyserviceApplication implements CommandLineRunner {
                     .firstName("Adam")
                     .lastName("Born")
                     .ssn("123-45-6789")
-                    .address(new Address("12312", "Main St", "NY", "NY"))
+                    .address(new Address("Main St", "Tampa", "FL", "NY"))
                     .birthDate(LocalDate.of(1991, 1, 1))
                     .gender(Gender.MALE)
                     .phoneNumber("+1-123-456-7890")

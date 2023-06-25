@@ -68,6 +68,7 @@ public class Appointment implements Serializable {
 
     @Override
     public String toString() {
+        Long prescriptionId = prescription == null ? null : prescription.getId();
         return "Appointment{ " +
                 "Id= " + id +
                 ", Symptoms= " + symptoms +
@@ -76,7 +77,7 @@ public class Appointment implements Serializable {
                 ", Doctor Id= " + doctor.getId() +
                 ", Patient SSN= " + patient.getSsn() +
                 ", AppointmentDate= " + appointmentDate +
-                ", Prescription Id= " + prescription.getId() +
+                ", Prescription Id= " + prescriptionId +
                 ", IsDisabled= " + isDisabled +
                 ", CreatedAt= " + createdAt +
                 " }";

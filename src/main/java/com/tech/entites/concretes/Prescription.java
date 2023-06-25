@@ -45,11 +45,13 @@ public class Prescription implements Serializable {
 
     @Override
     public String toString() {
+        Long doctorId = doctor == null ? null : doctor.getId();
+        Long appointmentId = appointment == null ? null : appointment.getId();
         return "Prescription{ " +
                 "Id= " + id +
                 ", Medicines={ " + medicines + " }" +
-                ", Doctor Id= " + doctor.getId() +
-                ", Appointment Id= " + appointment.getId() +
+                ", Doctor Id= " + doctorId +
+                ", Appointment Id= " + appointmentId +
                 ", CreatedAt= " + createdAt +
                 '}';
     }

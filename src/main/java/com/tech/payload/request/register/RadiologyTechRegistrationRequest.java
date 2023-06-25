@@ -27,7 +27,7 @@ public class RadiologyTechRegistrationRequest extends BaseRegistrationRequest im
     public RadiologyTechnician get() {
         return RadiologyTechnician.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())

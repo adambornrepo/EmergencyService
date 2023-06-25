@@ -1,0 +1,8 @@
+scheduler:
+  cron:
+    pattern:
+      expired: "0 0 */4 * * ?" #Every 4 hours (**:00), Every day
+      applied: "0 15 */4 * * ?" #Every 4 hours (**:10), Every day
+  certain:
+    time:
+      before: 172800000 # Two day

@@ -17,6 +17,8 @@ import com.tech.repository.LabTechnicianRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -92,7 +94,7 @@ public class LabTechnicianService {
         }
         return labTechnicianRepository.findAll(pageable).map(labTechMapper::buildSimpleLabTechResponse);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeLabTechnicians"}, allEntries = true)
     public ResponseEntity<DetailedLabTechResponse> saveLabTech(LabTechRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         LabTechnician labTech = request.get();
@@ -102,7 +104,7 @@ public class LabTechnicianService {
         log.info("Laboratory Technician saved: {}", saved);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(saved), HttpStatus.CREATED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeLabTechnicians"}, allEntries = true)
     public ResponseEntity<DetailedLabTechResponse> updateLabTech(LabTechUpdateRequest request, Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -123,7 +125,7 @@ public class LabTechnicianService {
         log.info("Laboratory Technician updated: {}", updated);
         return new ResponseEntity<>(labTechMapper.buildDetailedLabTechResponse(updated), HttpStatus.ACCEPTED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeLabTechnicians"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteLabTech(Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -146,7 +148,7 @@ public class LabTechnicianService {
                 HttpStatus.OK
         );
     }
-
+    @Cacheable(value = "activeLabTechnicians")
     public List<SimpleLabTechResponse> getAllActiveLabTech() {
         return labTechnicianRepository.findByIsDisabled(false)
                 .stream()

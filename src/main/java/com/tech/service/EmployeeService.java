@@ -1,14 +1,14 @@
 package com.tech.service;
 
 import com.tech.configuration.ApiMessages;
-import com.tech.entites.abstracts.Employee;
 import com.tech.mapper.EmployeeMapper;
 import com.tech.payload.resource.EmployeeExcelResource;
 import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.EmployeeResponse;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class EmployeeService {
     private final ExcelWriteService excelWriteService;
     private final ApiMessages apiMessages;
     private final EmployeeMapper employeeMapper;
-
+    @Cacheable(value = "activeEmployees")
     public List<EmployeeResponse> getAllActiveEmployeeList() {
         return coordinationService.getAllActiveEmployeeList()
                 .stream()
@@ -41,7 +41,7 @@ public class EmployeeService {
     }
 
     public ResponseEntity<ApiResponse> getAllActiveEmployeeForExport() {
-        var exportData = getAllActiveEmployeeList();
+        var exportData = getAllActiveEmployeeListForExport();
 
         String date = LocalDate.now().toString();
         excelWriteService.writeToExcel(

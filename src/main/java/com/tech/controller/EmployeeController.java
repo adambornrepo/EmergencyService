@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,10 +40,10 @@ public class EmployeeController {
     @Operation(
             summary = "Export All Active Employees",
             description = "Exports the list of all active Employees to Excel. " +
-                    "This method can be executed by Admin or Chief with read authority."
+                    "This method can be executed by Admin or Chief with create authority."
     )
-    @GetMapping("/getAll/active/export")
-    @PreAuthorize("hasAnyAuthority('admin:read','chief:read')")
+    @PostMapping("/getAll/active/export")
+    @PreAuthorize("hasAnyAuthority('admin:create','chief:create')")
     public ResponseEntity<ApiResponse> getAllActiveEmployeeForExport() {
         return employeeService.getAllActiveEmployeeForExport();
     }

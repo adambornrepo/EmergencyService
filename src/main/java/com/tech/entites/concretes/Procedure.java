@@ -29,7 +29,7 @@ public class Procedure implements Serializable {
     )
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(length = 150)
     private String doctorNote;
 
     @Column(length = 150)
@@ -67,16 +67,18 @@ public class Procedure implements Serializable {
 
     @Override
     public String toString() {
+        Long appointmentId = appointment == null ? null : appointment.getId();
+        Long employeeId = employee == null ? null : employee.getId();
         return "Procedure{ " +
                 "Id= " + id +
                 ", DoctorNote= " + doctorNote +
                 ", Applied= " + applied +
                 ", Status= " + status +
-                ", Appointment Id= " + appointment.getId() +
+                ", Appointment Id= " + appointmentId +
                 ", IsDisabled= " + isDisabled +
                 ", CreatedAt= " + createdAt +
                 ", UpdatedAt= " + updatedAt +
-                ", Employee Id= " + employee.getId() +
+                ", Employee Id= " + employeeId +
                 " }";
     }
 }

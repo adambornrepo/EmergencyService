@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmployeeMapper {
     public EmployeeResponse buildEmployeeResponse(Employee employee) {
-        return EmployeeResponse.builder()
+        var builder = EmployeeResponse.builder()
                 .id(employee.getId())
                 .firstName(employee.getFirstName())
                 .lastName(employee.getLastName())
@@ -16,15 +16,17 @@ public class EmployeeMapper {
                 .gender(employee.getGender())
                 .phoneNumber(employee.getPhoneNumber())
                 .birthDate(employee.getBirthDate())
-                .street(employee.getAddress().getStreet())
-                .city(employee.getAddress().getCity())
-                .state(employee.getAddress().getState())
-                .role(employee.getRole())
-                .build();
+                .role(employee.getRole());
+        if (employee.getAddress() != null) {
+            builder.street(employee.getAddress().getStreet())
+                    .city(employee.getAddress().getCity())
+                    .state(employee.getAddress().getState());
+        }
+        return builder.build();
     }
 
     public EmployeeExcelResource buildEmployeeExcelResource(Employee employee) {
-        return EmployeeExcelResource.builder()
+        var builder = EmployeeExcelResource.builder()
                 .id(employee.getId())
                 .firstName(employee.getFirstName())
                 .lastName(employee.getLastName())
@@ -32,10 +34,12 @@ public class EmployeeMapper {
                 .gender(employee.getGender())
                 .phoneNumber(employee.getPhoneNumber())
                 .birthDate(employee.getBirthDate())
-                .street(employee.getAddress().getStreet())
-                .city(employee.getAddress().getCity())
-                .state(employee.getAddress().getState())
-                .role(employee.getRole())
-                .build();
+                .role(employee.getRole());
+        if (employee.getAddress() != null) {
+            builder.street(employee.getAddress().getStreet())
+                    .city(employee.getAddress().getCity())
+                    .state(employee.getAddress().getState());
+        }
+        return builder.build();
     }
 }

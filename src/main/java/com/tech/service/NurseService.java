@@ -18,6 +18,8 @@ import com.tech.repository.NurseRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -91,7 +93,7 @@ public class NurseService {
         }
         return nurseRepository.findAll(pageable).map(nurseMapper::buildSimpleNurseResponse);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeNurses"}, allEntries = true)
     public ResponseEntity<DetailedNurseResponse> saveNurse(NurseRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         Nurse nurse = request.get();
@@ -101,7 +103,7 @@ public class NurseService {
         log.info("Nurse saved: {}", saved);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(saved), HttpStatus.CREATED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeNurses"}, allEntries = true)
     public ResponseEntity<DetailedNurseResponse> updateNurse(NurseUpdateRequest request, Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -122,7 +124,7 @@ public class NurseService {
         log.info("Nurse updated: {}", updated);
         return new ResponseEntity<>(nurseMapper.buildDetailedNurseResponse(updated), HttpStatus.ACCEPTED);
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeNurses"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteNurse(Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -145,7 +147,7 @@ public class NurseService {
                 HttpStatus.OK
         );
     }
-
+    @Cacheable(value = "activeNurses")
     public List<SimpleNurseResponse> getAllActiveNurse(Zone zone) {
         if (zone == null) {
             return nurseRepository.findByIsDisabledOrderByFirstNameAsc(false)
@@ -159,7 +161,7 @@ public class NurseService {
                     .collect(Collectors.toList());
         }
     }
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeNurses"}, allEntries = true)
     public ResponseEntity<DetailedNurseResponse> updateNurseZone(Zone zone, Long id) {
         Nurse found = getOneNurseById(id);
         if (found.isDisabled()) {

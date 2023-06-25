@@ -17,6 +17,8 @@ import com.tech.repository.RadiologyTechnicianRepository;
 import com.tech.security.role.Role;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -91,7 +93,7 @@ public class RadiologyTechnicianService {
         return radiologyTechRepository.findAll(pageable).map(radiologyTechMapper::buildSimpleRadiologyTechResponse);
     }
 
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRadTechnicians"}, allEntries = true)
     public ResponseEntity<DetailedRadiologyTechResponse> saveRadiologyTech(RadiologyTechRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
         RadiologyTechnician radiologyTech = request.get();
@@ -102,7 +104,7 @@ public class RadiologyTechnicianService {
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(saved), HttpStatus.CREATED);
     }
 
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRadTechnicians"}, allEntries = true)
     public ResponseEntity<DetailedRadiologyTechResponse> updateRadiologyTech(RadiologyTechUpdateRequest request, Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -124,7 +126,7 @@ public class RadiologyTechnicianService {
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(updated), HttpStatus.ACCEPTED);
     }
 
-
+    @CacheEvict(cacheNames = {"activeEmployees", "activeRadTechnicians"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteRadiologyTech(Long id, UserDetails userDetails) {
 
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -148,6 +150,7 @@ public class RadiologyTechnicianService {
         );
     }
 
+    @Cacheable(value = "activeRadTechnicians")
     public List<SimpleRadiologyTechResponse> getAllActiveRadiologyTech() {
         return radiologyTechRepository.findByIsDisabled(false)
                 .stream()

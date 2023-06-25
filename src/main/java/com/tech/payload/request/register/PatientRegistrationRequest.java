@@ -26,11 +26,11 @@ import java.util.function.Supplier;
 public class PatientRegistrationRequest implements Serializable, Supplier<Patient> {
 
     @NotNull(message = "{validation.null.first-name}")
-    @Size(min = 2,max = 50,message = "{validation.size.field}")
+    @Size(min = 2, max = 50, message = "{validation.size.field}")
     private String firstName;
 
     @NotNull(message = "{validation.null.last-name}")
-    @Size(min = 2,max = 50,message = "{validation.size.field}")
+    @Size(min = 2, max = 50, message = "{validation.size.field}")
     private String lastName;
 
     @JsonFormat(
@@ -60,14 +60,15 @@ public class PatientRegistrationRequest implements Serializable, Supplier<Patien
 
     @Override
     public Patient get() {
+        String email = getEmail() == null ? null : getEmail().toLowerCase(Locale.US);
         return Patient.builder()
                 .firstName(GeneralUtils.capitalize(getFirstName()))
-                .lastName(getLastName().toLowerCase(Locale.US))
+                .lastName(getLastName().toUpperCase(Locale.US))
                 .gender(getGender())
                 .ssn(getSsn())
                 .birthDate(getBirthDate())
                 .phoneNumber(getPhoneNumber())
-                .email(getEmail().toLowerCase(Locale.US))
+                .email(email)
                 .address(getAddress())
                 .build();
     }
