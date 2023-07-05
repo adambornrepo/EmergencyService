@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <meta name="description" content="Spring Boot Project">
+    <meta name="keywords" content="spring, boot, java, educational, project">
+    <meta name="author" content="Adam BORN">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="login.css">
 </head>
+
 <body>
-Hello Everyone! Welcome to My Channel!
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="login-box">
+                <h2>Emergency Service</h2>
+                <form id="loginForm" action="#">
+                    <div class="form-group">
+                        <label for="ssn">SSN</label>
+                        <input type="text" id="ssn" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                    <div class="button-container">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                        <p id="error-msg" class="text-center text-danger">Error messages</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="login.js"></script>
+
+
 </body>
+
 </html>

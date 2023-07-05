@@ -43,7 +43,7 @@ public class PrescriptionPdfService {
         String pdfFilePath = prepareDirectoriesAndExcelFilePath(dataSource.getFileName());
 
         try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage(new PDRectangle(620, 800));
+            PDPage page = new PDPage(new PDRectangle(465, 600));
             document.addPage(page);
 
             PDPageContentStream contentStream = new PDPageContentStream(document, page);
@@ -51,41 +51,41 @@ public class PrescriptionPdfService {
             File backgroundFile = new File(backgroundImgPath);
             BufferedImage backgroundImage = ImageIO.read(backgroundFile);
             PDImageXObject background = LosslessFactory.createFromImage(document, backgroundImage);
-            contentStream.drawImage(background, 0, 0, 620, 800);
+            contentStream.drawImage(background, 0, 0, 465, 600);
 
             contentStream.setNonStrokingColor(Color.BLUE);
-            contentStream.setFont(PDType1Font.TIMES_BOLD, 20);
+            contentStream.setFont(PDType1Font.TIMES_BOLD, 16);
 
             String doctorFullName = "Dr." + dataSource.getDoctorFirstName() + " " + dataSource.getDoctorLastName();
             String patientFullName = dataSource.getPatientFirstName() + " " + dataSource.getPatientLastName();
 
             contentStream.beginText();
-            contentStream.newLineAtOffset(400, 700);
+            contentStream.newLineAtOffset(300, 520);
             contentStream.showText(doctorFullName);
 
             contentStream.setNonStrokingColor(Color.DARK_GRAY);
-            contentStream.setFont(PDType1Font.COURIER, 14);
-            contentStream.newLineAtOffset(-300, -115);
+            contentStream.setFont(PDType1Font.COURIER, 12);
+            contentStream.newLineAtOffset(-230, -83);
             contentStream.showText(dataSource.getPatientSSN());
-            contentStream.newLineAtOffset(+300, 0);
+            contentStream.newLineAtOffset(+230, 0);
             contentStream.showText(patientFullName);
-            contentStream.newLineAtOffset(-300, -33);
+            contentStream.newLineAtOffset(-230, -24);
             contentStream.showText(dataSource.getPatientAge());
-            contentStream.newLineAtOffset(+300, 0);
+            contentStream.newLineAtOffset(+230, 0);
             contentStream.showText(dataSource.getPatientGender());
-            contentStream.newLineAtOffset(-300, -33);
+            contentStream.newLineAtOffset(-230, -24);
             contentStream.showText(dataSource.getDate());
-            contentStream.newLineAtOffset(+300, 0);
+            contentStream.newLineAtOffset(+230, 0);
             contentStream.showText(dataSource.getPatientPhoneNum());
-            contentStream.newLineAtOffset(-300, -33);
+            contentStream.newLineAtOffset(-230, -24);
             contentStream.showText(dataSource.getPatientAddress());
-            contentStream.newLineAtOffset(+300, 0);
-            contentStream.newLineAtOffset(-333, -33);
+            contentStream.newLineAtOffset(+230, 0);
+            contentStream.newLineAtOffset(-230, -24);
 
             int num = 1;
             for (String medicine : dataSource.getMedicines()) {
                 contentStream.showText(num++ + "-] " + medicine);
-                contentStream.newLineAtOffset(0, -33);
+                contentStream.newLineAtOffset(0, -24);
             }
 
             contentStream.endText();

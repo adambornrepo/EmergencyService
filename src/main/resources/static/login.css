@@ -1,0 +1,32 @@
+body {
+    background-color: #1E90FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-box {
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+    color: rgb(194, 70, 70);
+    text-align: center;
+}
+
+.login-box p {
+    padding-top: 10px;
+    text-align: center;
+    color: rgb(194, 70, 70);
+    display: none;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

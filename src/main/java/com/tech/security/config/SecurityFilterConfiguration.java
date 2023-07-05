@@ -37,12 +37,19 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(AUTH_WHITE_LIST).permitAll()
                         .anyRequest().authenticated()
                 )
+                .formLogin(
+                        configurer -> configurer
+                                .loginPage("/login.html")
+                                .permitAll()
+                                .defaultSuccessUrl("/dashboard.html", true)
+                )
                 .headers(configure -> configure.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .exceptionHandling(configure -> configure.authenticationEntryPoint(unauthorizedHandler))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(configure -> configure
                         .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessUrl("/login.html")
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler(((request, response, authentication) -> SecurityContextHolder.clearContext()))
                 )
@@ -53,9 +60,11 @@ public class SecurityFilterConfiguration {
             "/",
             "/api/v1/auth/**",
             "/index*",
+            "/dashboard*",
             "/static/**",
             "/*.js",
             "/*.json",
+            "/*.css",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger*/**"

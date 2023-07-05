@@ -36,6 +36,9 @@ public class EmailService {
     @Value("${email.px.subject}")
     private String emailSubject;
 
+    @Value("${email.px.text}")
+    private String emailText;
+
     @Value("${email.px.background-img}")
     private String backgroundImage;
 
@@ -56,7 +59,7 @@ public class EmailService {
             Map<String, Object> dataModel = new HashMap<>();
             dataModel.put("data", dataSource);
             template.process(dataModel, writer);
-            String emailContent = writer.toString();
+            String emailContent = emailText + writer.toString();
 
             helper.setTo(recipientEmail);
             helper.setSubject(emailSubject);

@@ -19,3 +19,7 @@ email:
     subject: Prescription Email
     template: email-template.ftl
     background-img: px_bg.png
+    text: |
+      <p>This prescription has been prepared specifically for your needs.</p>
+      <p>Please use these medications as directed and follow the instructions provided by your doctor.</p>
+      <p>Wishing you good health.</p>
