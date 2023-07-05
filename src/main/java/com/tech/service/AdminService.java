@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -88,6 +89,7 @@ public class AdminService {
     public Page<SimpleAdminResponse> getAllAdmin(Pageable pageable) {
         return adminRepository.findAll(pageable).map(adminMapper::buildSimpleAdminResponse);
     }
+
     @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<DetailedAdminResponse> saveAdmin(AdminRegistrationRequest request) {
         coordinationService.checkDuplicate(request.getSsn(), request.getPhoneNumber()); // ssn - phoneNum
@@ -98,6 +100,7 @@ public class AdminService {
         log.warn("New admin created: {}", saved);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(saved), HttpStatus.CREATED);
     }
+
     @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<DetailedAdminResponse> updateAdmin(AdminUpdateRequest request, Long id, UserDetails userDetails) {
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);
@@ -112,11 +115,12 @@ public class AdminService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(passwordEncoder.encode(found.getPassword()));
+        if (StringUtils.hasText(request.getPassword())) found.setPassword(passwordEncoder.encode(found.getPassword()));
         Admin updated = adminRepository.save(found);
         log.warn("Admin updated: {}", updated);
         return new ResponseEntity<>(adminMapper.buildDetailedAdminResponse(updated), HttpStatus.ACCEPTED);
     }
+
     @CacheEvict(cacheNames = {"activeEmployees", "activeAdmins"}, allEntries = true)
     public ResponseEntity<ApiResponse> deleteAdmin(Long id, UserDetails userDetails) {
         Employee employee = coordinationService.getOneEmployeeByUserDetails(userDetails);

@@ -19,7 +19,6 @@ import com.tech.payload.response.ApiResponse;
 import com.tech.payload.response.ProcedureResponse;
 import com.tech.repository.ProcedureRepository;
 import com.tech.security.role.Role;
-import com.tech.utils.GeneralUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

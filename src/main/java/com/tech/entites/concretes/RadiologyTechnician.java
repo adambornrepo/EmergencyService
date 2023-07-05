@@ -1,6 +1,5 @@
 package com.tech.entites.concretes;
 
-import com.tech.entites.abstracts.Employee;
 import com.tech.entites.abstracts.MedicalEmployee;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrePersist;

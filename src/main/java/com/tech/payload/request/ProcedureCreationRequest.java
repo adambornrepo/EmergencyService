@@ -1,6 +1,5 @@
 package com.tech.payload.request;
 
-import com.tech.configuration.ApiMessages;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;

@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -120,7 +121,7 @@ public class RadiologyTechnicianService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(passwordEncoder.encode(found.getPassword()));
+        if (StringUtils.hasText(request.getPassword())) found.setPassword(passwordEncoder.encode(found.getPassword()));
         RadiologyTechnician updated = radiologyTechRepository.save(found);
         log.info("Radiology Technician updated: {}", updated);
         return new ResponseEntity<>(radiologyTechMapper.buildDetailedRadiologyTechResponse(updated), HttpStatus.ACCEPTED);

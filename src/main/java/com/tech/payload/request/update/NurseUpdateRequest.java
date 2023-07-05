@@ -1,7 +1,6 @@
 package com.tech.payload.request.update;
 
 import com.tech.entites.concretes.Nurse;
-import com.tech.entites.enums.Zone;
 import com.tech.payload.request.update.abstracts.EmployeeUpdateRequest;
 import com.tech.utils.GeneralUtils;
 import lombok.*;

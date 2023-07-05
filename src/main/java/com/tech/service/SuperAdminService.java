@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j//logger
 @Transactional
@@ -91,7 +92,7 @@ public class SuperAdminService {
             coordinationService.checkDuplicate(null, request.getPhoneNumber());
         }
         request.accept(found);
-        found.setPassword(passwordEncoder.encode(found.getPassword()));
+        if (StringUtils.hasText(request.getPassword())) found.setPassword(passwordEncoder.encode(found.getPassword()));
         SuperAdmin updated = superAdminRepository.save(found);
         log.warn("Super Admin updated: {}", updated);
         return new ResponseEntity<>(buildDetailedSuperAdminResponse(updated), HttpStatus.ACCEPTED);

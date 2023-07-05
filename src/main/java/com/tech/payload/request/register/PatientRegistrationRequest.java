@@ -6,12 +6,10 @@ import com.tech.entites.concretes.Patient;
 import com.tech.entites.enums.Gender;
 import com.tech.payload.annotations.custom.PhoneNumber;
 import com.tech.payload.annotations.custom.SSN;
-import com.tech.payload.request.register.abstracts.BaseRegistrationRequest;
 import com.tech.utils.GeneralUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDate;

@@ -1,6 +1,5 @@
 package com.tech.payload.request.update;
 
-import com.tech.entites.enums.AppointmentStatus;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

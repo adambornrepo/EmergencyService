@@ -7,6 +7,8 @@ import com.tech.exception.custom.MissingArgumentException;
 import com.tech.payload.annotations.custom.ExportToExcel;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,7 +27,7 @@ public abstract class AbstractExcelExporter {
 
     protected abstract CellStyle buildDataCellStyle(Workbook workbook);
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractExcelExporter.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractExcelExporter.class);
 
     public <T> void writeToExcel(List<T> exportDataList, String fileName, String sheetName) {
 
