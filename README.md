@@ -29,4 +29,4 @@ In this project, you will find examples and implementations related to the follo
 - Login page
 - Receiving the authentication response and redirection
 
-Feel free to explore this project to learn more about these topics and how they are implemented. If you have any questions or suggestions, please don't hesitate to reach out.
+Feel free to explore this project to learn more about these topics and how they are implemented.
