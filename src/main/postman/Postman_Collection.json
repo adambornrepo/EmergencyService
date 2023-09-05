@@ -1,0 +1,3578 @@
+{
+	"info": {
+		"_postman_id": "7dd12bad-a534-4df9-984e-202f3d33dd70",
+		"name": "EmergencyService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SuperAdmin",
+			"item": [
+				{
+					"name": "SaveSuperAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"SuperAdmin\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-45-6780\",\r\n  \"phoneNumber\": \"+1-123-456-6780\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"password\": \"superadmin123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/super/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"super",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateSuperAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"SuperAdminUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-133-456-6780\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n    \"password\": \"superadminup123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/super/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"super",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteSuperAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/super/delete?id=2",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"super",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneSuperAdmin",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{api.v1}}/super/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"super",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "UpdateAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"AdminUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-233-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n    \"password\": \"adminup123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/admin/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/admin/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/admin/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/admin/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Admin\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-55-6789\",\r\n  \"phoneNumber\": \"+1-223-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"password\": \"admin123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/admin/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveAdmin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/admin/getAll/active",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"admin",
+								"getAll",
+								"active"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LabTech",
+			"item": [
+				{
+					"name": "UpdateLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"LabTechUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-333-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n    \"password\": \"labtechup123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/labTech/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/labTech/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/labTech/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/labTech/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/labTech/getAll/active",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"getAll",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveLabTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"LabTech\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-65-6789\",\r\n  \"phoneNumber\": \"+1-323-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"password\": \"labtech123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/labTech/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"labTech",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RadTech",
+			"item": [
+				{
+					"name": "UpdateRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"RadTechUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-433-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n    \"password\": \"radiotechup123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/radioTech/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/radioTech/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/radioTech/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/radioTech/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/radioTech/getAll/active",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"getAll",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveRadTech",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"RadTech\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-75-6789\",\r\n  \"phoneNumber\": \"+1-423-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"password\": \"radiotechtech123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/radioTech/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"radioTech",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PSR",
+			"item": [
+				{
+					"name": "UpdatePSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"PsrUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-533-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n    \"password\": \"psrup123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/psr/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"psr",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/psr/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"psr",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OnePSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/psr/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"psr",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllPSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/v1/psr/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"v1",
+								"psr",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActivePSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/psr/getAll/active",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"psr",
+								"getAll",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SavePSR",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Psr\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-85-6789\",\r\n  \"phoneNumber\": \"+1-523-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"password\": \"psr12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/psr/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"psr",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Patient",
+			"item": [
+				{
+					"name": "UpdatePatient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"PatientUp\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-633-456-6789\",\r\n   \"email\":\"adamd.born@gmail.com\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/patient/update?ssn=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"patient",
+								"update"
+							],
+							"query": [
+								{
+									"key": "ssn",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePatient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/patient/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"patient",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OnePatient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/patient/get?in=SSN&val=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"patient",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "SSN"
+								},
+								{
+									"key": "val",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllPatient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/patient/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"patient",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SavePatient",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Patient\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-95-6789\",\r\n  \"phoneNumber\": \"+1-623-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"email\":\"patient@gmail.com\",\r\n  \"password\": \"patient123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/patient/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"patient",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Nurse",
+			"item": [
+				{
+					"name": "UpdateNurse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"NurseUpdate\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-733-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"YELLOW\",\r\n    \"password\": \"nurse123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/nurse/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateNurseZone",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"NurseUpdate\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-733-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"YELLOW\",\r\n    \"password\": \"nurse123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/nurse/update/zone?to=GREEN&id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"update",
+								"zone"
+							],
+							"query": [
+								{
+									"key": "to",
+									"value": "GREEN"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteNurse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/nurse/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneNurse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/nurse/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllNurse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/nurse/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveNurse<optional zone>",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/nurse/getAll/active?zone=YELLOW",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"getAll",
+								"active"
+							],
+							"query": [
+								{
+									"key": "zone",
+									"value": "YELLOW"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveNurse",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Nurse\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-05-6789\",\r\n  \"phoneNumber\": \"+1-723-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"RED\",\r\n  \"password\": \"nurse123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/nurse/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"nurse",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Doctor",
+			"item": [
+				{
+					"name": "UpdateDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"DoctorUpdate\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-933-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"YELLOW\",\r\n    \"password\": \"doctor123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/dr/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AssignChief",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"DoctorUpdate\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-933-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"YELLOW\",\r\n    \"password\": \"doctor123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/dr/assign/chief?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"assign",
+								"chief"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateDoctorZone",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"DoctorUpdate\",\r\n  \"lastName\": \"DoeUp\",\r\n  \"phoneNumber\": \"+1-933-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"YELLOW\",\r\n    \"password\": \"doctor123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/dr/update/zone?to=RED&id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"update",
+								"zone"
+							],
+							"query": [
+								{
+									"key": "to",
+									"value": "RED"
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/dr/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/dr/get?in=ID&val=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"get"
+							],
+							"query": [
+								{
+									"key": "in",
+									"value": "ID"
+								},
+								{
+									"key": "val",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/dr/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveDoctor<optional zone>",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/dr/getAll/active?zone=YELLOW",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"getAll",
+								"active"
+							],
+							"query": [
+								{
+									"key": "zone",
+									"value": "YELLOW"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Doctor\",\r\n  \"lastName\": \"Doe\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"gender\": \"MALE\",\r\n  \"ssn\": \"123-15-6789\",\r\n  \"phoneNumber\": \"+1-923-456-6789\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"state\": \"NY\",\r\n    \"zipCode\": \"10001\"\r\n  },\r\n  \"zone\":\"RED\",\r\n  \"password\": \"doctor123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/dr/register",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"dr",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Procedure",
+			"item": [
+				{
+					"name": "UpdateProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"applied\": \"Applied other medical procedures\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/procedure/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CompleteProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/complete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"complete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Appointment'sProcedures",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/getAll/appointment?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"getAll",
+								"appointment"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Employee'sAllProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/getAll/employee?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"getAll",
+								"employee"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Employee'sAllActiveProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/getAll/active/employee?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"getAll",
+								"active",
+								"employee"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Employee'sProcedureOnDateExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/procedure/getAll/export/employee?id=1&on=2023-06-18",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"getAll",
+								"export",
+								"employee"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "on",
+									"value": "2023-06-18"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProcedure",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"doctorNote\":\"These analysis are needed\",\r\n  \"appointmentId\": 1,\r\n  \"employeeId\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/procedure/create",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProcedureForDoctor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"applied\":\"These procedures were applied\",\r\n  \"appointmentId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/procedure/create/dr",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"procedure",
+								"create",
+								"dr"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Appointment",
+			"item": [
+				{
+					"name": "CreateAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"representativeId\":3,\r\n    \"doctorId\":5,\r\n    \"patientSsn\":\"123-95-6789\",\r\n    \"symptoms\":\"Some symptoms\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/appointment/create",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"doctorId\":5,\r\n    \"symptoms\":\"Some symptoms too\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/appointment/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CancelAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/cancel?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"cancel"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CompleteAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/complete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"complete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OneAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/get?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"get"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DoctorIdAllAppointment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/doctor?id=5",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"doctor"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PatientSsnAllAppointmen",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/patient?ssn=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"patient"
+							],
+							"query": [
+								{
+									"key": "ssn",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PatientSsnAllAppointmenList",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/list/patient?ssn=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"list",
+								"patient"
+							],
+							"query": [
+								{
+									"key": "ssn",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PatientSsnAllAppointmentExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/all/export/patient?ssn=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"all",
+								"export",
+								"patient"
+							],
+							"query": [
+								{
+									"key": "ssn",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DoctorIdAllAppInProgress",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/inProgress/doctor?id=5",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"inProgress",
+								"doctor"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DoctorIdAllAppInProgressList",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/list/inProgress/doctor?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"list",
+								"inProgress",
+								"doctor"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DoctorIdAllAppInProgressExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/all/export/inProgress/doctor?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"all",
+								"export",
+								"inProgress",
+								"doctor"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllAppointmentByDate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/date?on=2023-06-11",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"date"
+							],
+							"query": [
+								{
+									"key": "on",
+									"value": "2023-06-11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllAppointmentByDateList",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/getAll/list/date?on=2023-06-11",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"getAll",
+								"list",
+								"date"
+							],
+							"query": [
+								{
+									"key": "on",
+									"value": "2023-06-11"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllAppointmentByDateExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/appointment/all/export/date?on=2023-06-18",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"appointment",
+								"all",
+								"export",
+								"date"
+							],
+							"query": [
+								{
+									"key": "on",
+									"value": "2023-06-18"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Prescription",
+			"item": [
+				{
+					"name": "OnePrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/get?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"get"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllPrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/getAll",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"getAll"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1etAll",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DoctorIdAllPrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/getAll/doctor?id=5",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"getAll",
+								"doctor"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PatientSsnAllPrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/getAll/patient/ssn?val=123-95-6789",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"getAll",
+								"patient",
+								"ssn"
+							],
+							"query": [
+								{
+									"key": "val",
+									"value": "123-95-6789"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PatientIdAllPrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/getAll/patient?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"getAll",
+								"patient"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1etAll",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AppointmentIdPrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/prescription/get/appointment?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"get",
+								"appointment"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1etAll",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"appointmentId\":1,\r\n  \"medicines\": [\r\n    \"Medicine 1\",\r\n    \"Medicine 2\",\r\n    \"Medicine 3\"\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/prescription/create",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreatePDFWithId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"appointmentId\":1,\r\n  \"medicines\": [\r\n    \"Medicine 1\",\r\n    \"Medicine 2\",\r\n    \"Medicine 3\"\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/prescription/save/pdf?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"save",
+								"pdf"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SendMailWithId",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"appointmentId\":1,\r\n  \"medicines\": [\r\n    \"Medicine 1\",\r\n    \"Medicine 2\",\r\n    \"Medicine 3\"\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/prescription/send/mail?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"send",
+								"mail"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdatePrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"medicines\": [\r\n    \"Medicine 4\",\r\n    \"Medicine 5\",\r\n    \"Medicine 6\"\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/prescription/update?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"update"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeletePrescription",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/prescription/delete?id=1",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"prescription",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login[SuperAdmin]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-45-6789\",\r\n    \"password\":\"super123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[Admin]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-55-6789\",\r\n    \"password\":\"admin123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[LabTech]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-65-6789\",\r\n    \"password\":\"labtech123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[RadTech]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-75-6789\",\r\n    \"password\":\"radiotechtech123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[PSR]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-85-6789\",\r\n    \"password\":\"psr12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[Nurse]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-05-6789\",\r\n    \"password\":\"nurse123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login[Doctor]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();\r",
+									"var jwt = jsonData.token;\r",
+									"if(jwt!=null){\r",
+									"    pm.globals.set(\"token\",jwt)\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ssn\":\"123-15-6789\",\r\n    \"password\":\"doctor123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api.v1}}/auth/login",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Employee",
+			"item": [
+				{
+					"name": "AllActiveEmployee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/employee/getAll/active",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"employee",
+								"getAll",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "AllActiveEmployeeExport",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api.v1}}/employee/getAll/active/export",
+							"host": [
+								"{{api.v1}}"
+							],
+							"path": [
+								"employee",
+								"getAll",
+								"active",
+								"export"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Demo",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api.v1}}/demo/hello",
+					"host": [
+						"{{api.v1}}"
+					],
+					"path": [
+						"demo",
+						"hello"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -60,7 +60,7 @@ public class SecurityFilterConfiguration {
             "/",
             "/api/v1/auth/**",
             "/index*",
-            "/dashboard*",
+//            "/dashboard*",
             "/static/**",
             "/*.js",
             "/*.json",
