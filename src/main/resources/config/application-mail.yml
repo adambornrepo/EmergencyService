@@ -5,7 +5,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: noreply.emergency.sevice@gmail.com
-    password: tmwyvgqsejhuihow
+    password: <hereyourmailpassword>
     protocol: smtp
     properties:
       mail:
